@@ -9,15 +9,7 @@ jobs:
     steps:
       - checkout
 
-      - run:
-          name: install dependencies
-          command: |
-            sudo apt-get install docker
-
-      - run:
-          name: start docker
-          command: |
-            sudo service docker restart
+      - setup_remote_docker
 
       - run:
           name: run tests
