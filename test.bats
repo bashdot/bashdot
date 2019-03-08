@@ -105,11 +105,14 @@ teardown() {
 @test "uninstall" {
   cd /root
   dotfiler install public private
-  result0=`cd /root && dotfiler uninstall | tail -1`
-  echo $result0
-  result1=`dotfiler list`
-  result2=`dotfiler dir`
-  [ "$result0" == "Completed uninstallation succesfully." ]
-  [ "$result1" == "No dotfiles installed by dotfiler." ]
+  result1=`dotfiler dir`
+  [ "$result1" == "/root" ]
+
+  run dotfiler uninstall
+  [ $status = 0 ]
+
+  result2=`dotfiler list`
+  result3=`dotfiler dir`
   [ "$result2" == "No dotfiles installed by dotfiler." ]
+  [ "$result3" == "No dotfiles installed by dotfiler." ]
 }
