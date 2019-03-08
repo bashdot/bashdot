@@ -33,8 +33,8 @@ For example, if you run:
 bash dotfiler install public private
 ```
 
-dotfiler will symlink all the files in the public and private directories within profiles
-into your home directory while prepending a ".".
+Dotfiler will symlink all the files in the public and private directories within profiles
+into your home directory while prepending a "period".
 
 The above command would create the following symlinks:
 
