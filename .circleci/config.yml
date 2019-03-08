@@ -12,7 +12,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            apt-get install docker
+            sudo apt-get install docker
 
       - run:
           name: run tests
