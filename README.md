@@ -4,7 +4,8 @@
 
 I am **bashdot**.
 
-I am a dotfile management framework with support for multiple profiles, providing different configurations for different environments.
+I am a minimazlist dotfile management framework focused on supporting imultiple profiles, providing different
+configurations based on the profiles installed on a given system.
 
 I am written **100% in bash** and [tested](https://circleci.com/gh/weavenet/bashdot/tree/master) using [bats](https://github.com/sstephenson/bats).
 
@@ -54,7 +55,7 @@ You can then make changes to files in the **public** or **private** profiles, or
 add additional profiles as necessary.  If you use different files in different
 environments you can create a profile for each environment with the appropriate dotfiles.
 
-Since the files are symlinked from home, If you keep the files in a shared
+Since the files are symlinked from home, if you keep the files in a shared
 drive, changes to files on one instance will automatically be reflected on all
 instances with that profile installed.
 
@@ -64,10 +65,6 @@ allow for doing any specific setup for the a profile. See
 for exmaples of profiles with different variables initialized.
 
 ## Bashdot Development
-
-### Pre-reqs
-
-* Docker
 
 ### Test
 
