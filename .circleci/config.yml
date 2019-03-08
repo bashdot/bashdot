@@ -15,6 +15,11 @@ jobs:
             sudo apt-get install docker
 
       - run:
+          name: start docker
+          command: |
+            sudo service docker restart
+
+      - run:
           name: run tests
           command: |
             make test
