@@ -50,9 +50,8 @@ install() {
 
     echo "Adding dotfiles profile '$profile'."
 
-    cd $profile_dir
-
     echo "Checking for exiting dotfiles."
+    cd $profile_dir
     for file in `ls |grep -v $ignored_files`; do
         dotfile=~/.$file
         if [ -e $dotfile ]; then
@@ -75,14 +74,14 @@ install() {
 }
 
 list_links() {
-    d=`cat ~/.dotfiler`
+    dotfiles_directry=`cat ~/.dotfiler`
     for i in $(ls -a ~); do
 
-        # Only evaluate symlink
+        # Only evaluate symlinks
         if [[ -h ~/$i ]]; then
 
-            # Only remove if it points to the dotfiles directory
-            ls -ld ~/$i |grep $d > /dev/null
+            # Only include if it points to the dotfiles directory
+            ls -ld ~/$i |grep $dotfiles_directry > /dev/null
             if [ $? -eq 0 ];then
                 echo $i
             fi
