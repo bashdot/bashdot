@@ -71,6 +71,20 @@ teardown() {
   [ $status = 0 ]
 }
 
+@test "validate ignored files not symlinked" {
+  cd /root
+  dotfiler install public
+
+  run test -e /root/.bashrc
+  [ $status = 0 ]
+
+  run test -e /root/.profilerc_public
+  [ $status = 0 ]
+
+  run test -e /root/.README.md
+  [ $status != 0 ]
+}
+
 @test "re-install" {
   cd /root
   dotfiler install public private
@@ -107,28 +121,30 @@ teardown() {
   [ $status = 0 ]
 }
 
-
 @test "profiles" {
   cd /root
   dotfiler install public private
-  result1=`. ~/.bashrc > /dev/null ; echo -e $PRIVATE_VAR`
-  result2=`. ~/.bashrc > /dev/null ; echo -e $PUBLIC_VAR`
-
-  [ "$result1" == "abc" ]
-  [ "$result2" == "123" ]
+  . ~/.bashrc
+  [ "$PRIVATE_VAR" == "abc" ]
+  [ "$PUBLIC_VAR" == "123" ]
 }
 
 @test "uninstall" {
   cd /root
   dotfiler install public private
-  result1=`dotfiler dir`
-  [ "$result1" == "/root" ]
+
+  run dotfiler dir
+  [ "$output" == "/root" ]
+  [ $status = 0 ]
 
   run dotfiler uninstall
   [ $status = 0 ]
 
-  result2=`dotfiler list`
-  result3=`dotfiler dir`
-  [ "$result2" == "No dotfiles installed by dotfiler." ]
-  [ "$result3" == "No dotfiles installed by dotfiler." ]
+  run dotfiler list
+  [ "$output" == "No dotfiles installed by dotfiler." ]
+  [ $status = 0 ]
+
+  run dotfiler dir
+  [ "$output" == "No dotfiles installed by dotfiler." ]
+  [ $status = 0 ]
 }

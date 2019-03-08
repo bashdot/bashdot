@@ -3,7 +3,6 @@
 DIR=`pwd`
 
 action=$1
-ignored_files="README.md"
 
 usage() {
     case $1 in
@@ -29,6 +28,8 @@ install() {
     profile=$1
     profiles_dir=$DIR/profiles
     profile_dir=$profiles_dir/$profile
+
+    ignored_files="README.md" # Files will not be symlink into ~
 
     if [ ! -d $profiles_dir ]; then
         echo "Directory profiles does not exist in '$DIR'."
