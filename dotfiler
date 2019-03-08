@@ -1,0 +1,154 @@
+#!/bin/bash
+
+DIR=`pwd`
+
+action=$1
+ignored_files="README.md"
+
+usage() {
+    case $1 in
+        commands)
+            echo "Usage: `basename $0` [dir|install|list|uninstall] OPTIONS"
+            ;;
+        install)
+            echo "Usage: `basename $0` install PROFILE1 PROFILE2 ... PROFILEN"
+            ;;
+    esac
+}
+
+if [ "$action" != "dir" ] &&
+    [ "$action" != "install" ] &&
+    [ "$action" != "uninstall" ] &&
+    [ "$action" != "list" ] &&
+    [ "$action" != "ls" ] ; then
+    usage commands
+    exit 1
+fi
+
+install() {
+    profile=$1
+    profiles_dir=$DIR/profiles
+    profile_dir=$profiles_dir/$profile
+
+    if [ ! -d $profiles_dir ]; then
+        echo "Directory profiles does not exist in '$DIR'."
+        exit 1
+    fi
+
+    if [ -f ~/.dotfiler ]; then
+        dotfiler_current_dir=`cat ~/.dotfiler`
+        if [ "$dotfiler_current_dir" != "$DIR" ];then
+            echo "Profiles already installed from '$dotfiler_current_dir'."
+            exit 1
+        fi
+    fi
+
+    if [ ! -d $profile_dir ]; then
+        echo "Profile '$profile' directory does not exist."
+        exit 1
+    fi
+
+    echo "Adding dotfiles profile '$profile'."
+
+    cd $profile_dir
+
+    echo "Installing dotfiles from '$profiles_dir'."
+    echo $DIR > ~/.dotfiler
+
+    for file in `ls |grep -v $ignored_files`; do
+        echo "Removing link to '$file'."
+        \rm -rf ~/.$file
+
+        echo "Linking '$file'."
+        ln -s $profile_dir/$file ~/.$file
+    done
+
+    echo "Completed adding dotfiles profile '$profile'."
+}
+
+list_links() {
+    d=`cat ~/.dotfiler`
+    for i in $(ls -a ~); do
+
+        # Only evaluate symlink
+        if [[ -h ~/$i ]]; then
+
+            # Only remove if it points to the dotfiles directory
+            ls -ld ~/$i |grep $d > /dev/null
+            if [ $? -eq 0 ];then
+                echo $i
+            fi
+        fi
+    done
+}
+
+list_profiles() {
+    if [ ! -f ~/.dotfiler ];then
+        echo "No dotfiles installed by dotfiler."
+    else
+        for i in $(list_links); do
+            readlink ~/$i |sed -e "s/^.*\/profiles\/\(.*\)\/.*$/\1/"
+        done |sort |uniq
+    fi
+}
+
+dir() {
+    if [ ! -f ~/.dotfiler ];then
+        echo "No dotfiles installed by dotfiler."
+    else
+        cat ~/.dotfiler
+    fi
+}
+
+uninstall() {
+    if [ ! -f ~/.dotfiler ]; then
+        echo "No '.dotfiler' file in ~."
+        exit 1
+    fi
+
+    echo "Removing files linking to '$DIR'."
+
+    # Loop through each file and only reomve if they are a symlink
+    # and point to a file in the dotfiles dir
+    for i in $(list_links);do
+        echo "Removing '$i'."
+        \rm ~/$i
+    done
+
+    echo "Removing .dotfiler file."
+    \rm -f ~/.dotfiler
+}
+
+case $action in
+    install)
+        if [ $# -lt 2 ]; then
+            usage install
+            exit 1
+        fi
+
+        while true; do
+            shift
+
+            if [ -z $1 ];then
+                break
+            fi
+
+            install $1
+        done
+        echo "Completed installation of all profiles succesfully."
+        ;;
+    dir)
+        dir
+        ;;
+    ls|list)
+        list_profiles
+        ;;
+    uninstall)
+        uninstall
+        echo "Completed uninstallation succesfully."
+        ;;
+    *)
+        echo "Unknown action '$action'."
+        ;;
+esac
+
