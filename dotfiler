@@ -54,7 +54,15 @@ install() {
     cd $profile_dir
     for file in `ls |grep -v $ignored_files`; do
         dotfile=~/.$file
+        source_file=$profile_dir/$file
         if [ -e $dotfile ]; then
+            existing=`readlink $dotfile`
+
+            if [ "$existing" == "$source_file" ]; then
+                echo "File '$dotfile' is the same, continuing."
+                continue
+            fi
+
             echo "File '.bashrc' already exists, exiting."
             exit 1
         fi
@@ -66,6 +74,12 @@ install() {
     for file in `ls |grep -v $ignored_files`; do
         dotfile=~/.$file
         source_file=$profile_dir/$file
+        existing=`readlink $dotfile`
+
+        if [ "$existing" == "$source_file" ]; then
+            echo "File '$dotfile' is the same, continuing."
+            continue
+        fi
         echo "Linking '$source_file' to '$dotfile'."
         ln -s $source_file $dotfile
     done

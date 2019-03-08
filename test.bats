@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
 teardown() {
-  /bin/rm -rf ~/.bashrc ~/.profilerc* ~/.dotfiler
+  /bin/rm -rf ~/.bashrc ~/.profilerc* ~/.dotfiler profiles/another
 }
 
 @test "general help" {
@@ -51,7 +51,16 @@ teardown() {
   cd /tmp
   mkdir -p profiles/public
   run dotfiler install public
-  [ "$output" == "Profiles already installed from '/root'." ]
+  [ $status = 1 ]
+}
+
+@test "error file already installed from another profile" {
+  cd /root
+  dotfiler install public
+
+  mkdir -p profiles/another
+  touch profiles/another/bashrc
+  run dotfiler install another
   [ $status = 1 ]
 }
 
@@ -59,6 +68,13 @@ teardown() {
   cd /root
   run dotfiler install public private
   [ "${lines[11]}" == "Completed installation of all profiles succesfully." ]
+  [ $status = 0 ]
+}
+
+@test "re-install" {
+  cd /root
+  dotfiler install public private
+  run dotfiler install public private
   [ $status = 0 ]
 }
 
