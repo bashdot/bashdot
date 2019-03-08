@@ -6,7 +6,7 @@ I am **dotfiler**.
 
 I am a dotfile management framework with support for multiple profiles, providing different configurations for different environments.
 
-I am written **100% in bash** and heavily [tested](https://circleci.com/gh/weavenet/dotfiler/tree/master).
+I am written **100% in bash** and [tested](https://circleci.com/gh/weavenet/dotfiler/tree/master) using [bats](https://github.com/sstephenson/bats).
 
 ## Overview
 
