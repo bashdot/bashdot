@@ -43,7 +43,8 @@ instances with that profile installed.
 
 The default **.bashrc** will load anything in file prepended with **profilerc** to
 allow for doing any specific setup for the a profile. See
-(profiles)[https://github.com/weavenet/dotfiler/tree/master/profiles] for more information.
+[profiles](https://github.com/weavenet/dotfiler/tree/master/profiles)
+for exmaples of profiles with different variables initialized.
 
 ## Development
 
