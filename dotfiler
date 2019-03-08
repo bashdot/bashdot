@@ -52,15 +52,23 @@ install() {
 
     cd $profile_dir
 
-    echo "Installing dotfiles from '$profiles_dir'."
+    echo "Checking for exiting dotfiles."
+    for file in `ls |grep -v $ignored_files`; do
+        dotfile=~/.$file
+        if [ -e $dotfile ]; then
+            echo "File '.bashrc' already exists, exiting."
+            exit 1
+        fi
+    done
+
     echo $DIR > ~/.dotfiler
 
+    echo "Installing dotfiles from '$profiles_dir'."
     for file in `ls |grep -v $ignored_files`; do
-        echo "Removing link to '$file'."
-        \rm -rf ~/.$file
-
-        echo "Linking '$file'."
-        ln -s $profile_dir/$file ~/.$file
+        dotfile=~/.$file
+        source_file=$profile_dir/$file
+        echo "Linking '$source_file' to '$dotfile'."
+        ln -s $source_file $dotfile
     done
 
     echo "Completed adding dotfiles profile '$profile'."
@@ -135,6 +143,7 @@ case $action in
 
             install $1
         done
+
         echo "Completed installation of all profiles succesfully."
         ;;
     dir)
@@ -146,9 +155,6 @@ case $action in
     uninstall)
         uninstall
         echo "Completed uninstallation succesfully."
-        ;;
-    *)
-        echo "Unknown action '$action'."
         ;;
 esac
 

@@ -9,4 +9,7 @@ COPY profiles/public /root/profiles/public/
 COPY profiles/private /root/profiles/private/
 COPY test.bats /root
 
+RUN chmod 755 /usr/bin/dotfiler
+RUN rm /root/.bashrc /root/.profile
+
 ENTRYPOINT ["bats", "/root/test.bats"]

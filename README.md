@@ -1,6 +1,10 @@
 # Summary
 
-I am **dotfiler**.  I manage dotfiles with support for multiple profiles with differing configurations based on which profiles are installed on an instance.
+I am **dotfiler**.
+
+I manage dotfiles with support for multiple profiles providing differing configurations for different environments.
+
+I am written entirely in bash and heavily [tested](https://github.com/weavenet/dotfiler/blob/master/test.bats).
 
 ## Overview
 
