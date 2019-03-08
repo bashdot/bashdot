@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/weavenet/dotfiler/tree/master.svg?style=svg)](https://circleci.com/gh/weavenet/dotfiler/tree/master)
+
 # Summary
 
 I am **dotfiler**.
