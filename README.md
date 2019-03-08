@@ -4,9 +4,9 @@
 
 I am **dotfiler**.
 
-I manage dotfiles with support for multiple profiles providing differing configurations for different environments.
+I am a dotfile management framework with support for multiple profiles, providing different configurations for different environments.
 
-I am written entirely in bash and heavily [tested](https://github.com/weavenet/dotfiler/blob/master/test.bats).
+I am written **100% in bash** and heavily [tested](https://circleci.com/gh/weavenet/dotfiler/tree/master).
 
 ## Overview
 
