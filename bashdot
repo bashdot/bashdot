@@ -36,10 +36,10 @@ install() {
         exit 1
     fi
 
-    if [ -f ~/.dotfiler ]; then
-        dotfiler_current_dir=`cat ~/.dotfiler`
-        if [ "$dotfiler_current_dir" != "$DIR" ];then
-            echo "Profiles already installed from '$dotfiler_current_dir'."
+    if [ -f ~/.bashdot ]; then
+        bashdot_current_dir=`cat ~/.bashdot`
+        if [ "$bashdot_current_dir" != "$DIR" ];then
+            echo "Profiles already installed from '$bashdot_current_dir'."
             exit 1
         fi
     fi
@@ -69,7 +69,7 @@ install() {
         fi
     done
 
-    echo $DIR > ~/.dotfiler
+    echo $DIR > ~/.bashdot
 
     echo "Installing dotfiles from '$profiles_dir'."
     for file in `ls |grep -v $ignored_files`; do
@@ -89,7 +89,7 @@ install() {
 }
 
 list_links() {
-    dotfiles_directry=`cat ~/.dotfiler`
+    dotfiles_directry=`cat ~/.bashdot`
     for i in $(ls -a ~); do
 
         # Only evaluate symlinks
@@ -105,8 +105,8 @@ list_links() {
 }
 
 list_profiles() {
-    if [ ! -f ~/.dotfiler ];then
-        echo "No dotfiles installed by dotfiler."
+    if [ ! -f ~/.bashdot ];then
+        echo "No dotfiles installed by bashdot."
     else
         for i in $(list_links); do
             readlink ~/$i |sed -e "s/^.*\/profiles\/\(.*\)\/.*$/\1/"
@@ -115,16 +115,16 @@ list_profiles() {
 }
 
 dir() {
-    if [ ! -f ~/.dotfiler ];then
-        echo "No dotfiles installed by dotfiler."
+    if [ ! -f ~/.bashdot ];then
+        echo "No dotfiles installed by bashdot."
     else
-        cat ~/.dotfiler
+        cat ~/.bashdot
     fi
 }
 
 uninstall() {
-    if [ ! -f ~/.dotfiler ]; then
-        echo "No '.dotfiler' file in ~."
+    if [ ! -f ~/.bashdot ]; then
+        echo "No '.bashdot' file in ~."
         exit 1
     fi
 
@@ -137,8 +137,8 @@ uninstall() {
         \rm ~/$i
     done
 
-    echo "Removing .dotfiler file."
-    \rm -f ~/.dotfiler
+    echo "Removing .bashdot file."
+    \rm -f ~/.bashdot
 }
 
 case $action in
