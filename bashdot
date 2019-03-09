@@ -1,5 +1,7 @@
 #!/bin/bash
 
+VERSION=1.0.0
+
 DIR=`pwd`
 
 action=$1
@@ -7,7 +9,7 @@ action=$1
 usage() {
     case $1 in
         commands)
-            echo "Usage: `basename $0` [dir|install|list|uninstall] OPTIONS"
+            echo "Usage: `basename $0` [dir|install|list|uninstall|version] OPTIONS"
             ;;
         install)
             echo "Usage: `basename $0` install PROFILE1 PROFILE2 ... PROFILEN"
@@ -18,6 +20,7 @@ usage() {
 if [ "$action" != "dir" ] &&
     [ "$action" != "install" ] &&
     [ "$action" != "uninstall" ] &&
+    [ "$action" != "version" ] &&
     [ "$action" != "list" ] &&
     [ "$action" != "ls" ] ; then
     usage commands
@@ -170,5 +173,8 @@ case $action in
     uninstall)
         uninstall
         echo "Completed uninstallation succesfully."
+        ;;
+    version)
+        echo $VERSION
         ;;
 esac

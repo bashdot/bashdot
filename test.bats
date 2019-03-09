@@ -6,7 +6,7 @@ teardown() {
 
 @test "general help" {
   run bashdot
-  [ "$output" == "Usage: bashdot [dir|install|list|uninstall] OPTIONS" ]
+  [ "$output" == "Usage: bashdot [dir|install|list|uninstall|version] OPTIONS" ]
   [ $status = 1 ]
 }
 
@@ -122,6 +122,12 @@ teardown() {
 @test "dir no dotfiles installed" {
   run bashdot dir
   [ "$output" == "No dotfiles installed by bashdot." ]
+  [ $status = 0 ]
+}
+
+@test "version" {
+  run bashdot version
+  [ "$output" == "1.0.0" ]
   [ $status = 0 ]
 }
 
