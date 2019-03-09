@@ -8,7 +8,7 @@ I am a minimalist dotfile management framework focused on supporting multiple
 profiles, providing different configurations based on the profiles installed
 on a given system.
 
-I am written **100% in bash**, require **no dependencies** outside of bash and am [tested](https://circleci.com/gh/weavenet/bashdot/tree/master) using [bats](https://github.com/sstephenson/bats).
+I am written **100% in bash**, require **no dependencies** outside of bash, and am [tested](https://circleci.com/gh/weavenet/bashdot/tree/master) using [bats](https://github.com/sstephenson/bats).
 
 ## Overview
 
