@@ -4,10 +4,11 @@
 
 I am **bashdot**.
 
-I am a minimazlist dotfile management framework focused on supporting imultiple profiles, providing different
-configurations based on the profiles installed on a given system.
+I am a minimalist dotfile management framework focused on supporting multiple
+profiles, providing different configurations based on the profiles installed
+on a given system.
 
-I am written **100% in bash** and [tested](https://circleci.com/gh/weavenet/bashdot/tree/master) using [bats](https://github.com/sstephenson/bats).
+I am written **100% in bash**, require **no dependencies** outside of bash and am [tested](https://circleci.com/gh/weavenet/bashdot/tree/master) using [bats](https://github.com/sstephenson/bats).
 
 ## Overview
 
@@ -64,9 +65,27 @@ allow for doing any specific setup for the a profile. See
 [profiles](https://github.com/weavenet/bashdot/tree/master/profiles)
 for examples of profiles with different variables initialized.
 
+## Frequently Asked Questions
+
+**Q:** Does bashdot support templates or user input for configuring dotfiles during installation?
+
+**A:** No, if you have different configurations of a single dotfile, bashdot handles that
+by supporting multiple profiles. For example if you want to setup differnet **.gitconfig**
+for your **home** and **work** environments, create a home and work profile, and within each of
+those profiles add the appropriate gitconfig, then use bashdot to install the approriate profile
+on each system.
+
+**Q:** What if I have secrets or other private information to install in my dotfile?
+
+**A:** Never check in sensitive information in your dotfiles. To remove sensitive information,
+either a) pull that information from an external system or b) encrypt it and read the decryption
+key from a location not in your dotfiles. See [here](https://gist.github.com/weavenet/f3af28350f07176674a5474b2d891102) for examples.
+
 ## Bashdot Development
 
 ### Test
+
+Only requirement to run tests is [docker](https://docs.docker.com/install/). Once installed run:
 
 ```
 make test
