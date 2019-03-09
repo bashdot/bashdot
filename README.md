@@ -11,8 +11,8 @@ I am written **100% in bash** and [tested](https://circleci.com/gh/weavenet/bash
 
 ## Overview
 
-Bashdot works by symlinking all files and directions in **profiles** within the current
-work directory to the users home.
+Bashdot works by symlinking all files and directions in **profiles**, within the current
+directory where bashdot is run, to files in the users home.
 
 One or more profiles can be installed on a specific computer to provide
 the desired dotfiles for it's purpose (work, home, shared, public, etc.).
@@ -62,7 +62,7 @@ instances with that profile installed.
 The default **.bashrc** will load anything in file prepended with **profilerc** to
 allow for doing any specific setup for the a profile. See
 [profiles](https://github.com/weavenet/bashdot/tree/master/profiles)
-for exmaples of profiles with different variables initialized.
+for examples of profiles with different variables initialized.
 
 ## Bashdot Development
 

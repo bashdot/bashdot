@@ -59,8 +59,8 @@ install() {
         if [ -e $dotfile ]; then
             existing=`readlink $dotfile`
 
+            # Skip files which already link to the same location
             if [ "$existing" == "$source_file" ]; then
-                echo "File '$dotfile' is the same, continuing."
                 continue
             fi
 
@@ -68,6 +68,7 @@ install() {
             exit 1
         fi
     done
+    echo "Found no existing dotfiles in home."
 
     echo $DIR > ~/.bashdot
 

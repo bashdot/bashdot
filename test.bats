@@ -67,7 +67,7 @@ teardown() {
 @test "install" {
   cd /root
   run bashdot install public private
-  [ "${lines[11]}" == "Completed installation of all profiles succesfully." ]
+  [ "${lines[13]}" == "Completed installation of all profiles succesfully." ]
   [ $status = 0 ]
 }
 
