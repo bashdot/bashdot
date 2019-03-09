@@ -18,15 +18,15 @@ teardown() {
 
 @test "error profiles does not exist" {
   cd /tmp
-  run bashdot install public
+  run bashdot install shared
   [ "$output" == "Directory profiles does not exist in '/tmp'." ]
   [ $status = 1 ]
 }
 
 @test "error profile does not exist" {
   mkdir profiles
-  run bashdot install public
-  [ "$output" == "Profile 'public' directory does not exist." ]
+  run bashdot install shared
+  [ "$output" == "Profile 'shared' directory does not exist." ]
   [ $status = 1 ]
 }
 
@@ -38,25 +38,25 @@ teardown() {
 
 @test "error file already exists on install" {
   touch ~/.bashrc
-  mkdir -p profiles/public
-  touch profiles/public/bashrc
-  run bashdot install public
+  mkdir -p profiles/shared
+  touch profiles/shared/bashrc
+  run bashdot install shared
   [ "${lines[2]}" == "File '.bashrc' already exists, exiting." ]
   [ $status = 1 ]
 }
 
 @test "error already installed" {
   cd /root
-  bashdot install public
+  bashdot install shared
   cd /tmp
-  mkdir -p profiles/public
-  run bashdot install public
+  mkdir -p profiles/shared
+  run bashdot install shared
   [ $status = 1 ]
 }
 
 @test "error file already installed from another profile" {
   cd /root
-  bashdot install public
+  bashdot install shared
 
   mkdir -p profiles/another
   touch profiles/another/bashrc
@@ -66,19 +66,23 @@ teardown() {
 
 @test "install" {
   cd /root
-  run bashdot install public private
-  [ "${lines[13]}" == "Completed installation of all profiles succesfully." ]
+  run bashdot install shared work
+  echo "BOOM: $output"
+  [ "${lines[12]}" == "Completed installation of all profiles succesfully." ]
   [ $status = 0 ]
 }
 
 @test "validate ignored files not symlinked" {
   cd /root
-  bashdot install public
+  bashdot install shared work home
 
   run test -e /root/.bashrc
   [ $status = 0 ]
 
-  run test -e /root/.profilerc_public
+  run test -e /root/.profilerc_work
+  [ $status = 0 ]
+
+  run test -e /root/.profilerc_home
   [ $status = 0 ]
 
   run test -e /root/.README.md
@@ -87,23 +91,23 @@ teardown() {
 
 @test "re-install" {
   cd /root
-  bashdot install public private
-  run bashdot install public private
+  bashdot install shared work
+  run bashdot install shared work
   [ $status = 0 ]
 }
 
 @test "ls" {
   cd /root
-  bashdot install public private
+  bashdot install shared work
   run bashdot list
-  [ "${lines[0]}" == "private" ]
-  [ "${lines[1]}" == "public" ]
+  [ "${lines[0]}" == "shared" ]
+  [ "${lines[1]}" == "work" ]
   [ $status = 0 ]
 }
 
 @test "dir" {
   cd /root
-  bashdot install public private
+  bashdot install shared work
   run bashdot dir
   [ "${lines[0]}" == "/root" ]
   [ $status = 0 ]
@@ -121,17 +125,21 @@ teardown() {
   [ $status = 0 ]
 }
 
-@test "profiles" {
+@test "profilerc is sourced" {
   cd /root
-  bashdot install public private
+  bashdot install shared work
   . ~/.bashrc
-  [ "$PRIVATE_VAR" == "abc" ]
-  [ "$PUBLIC_VAR" == "123" ]
+  [ "$HOME_VAR" == "" ]
+  [ "$WORK_VAR" == "123" ]
+
+  bashdot install home
+  . ~/.bashrc
+  [ "$HOME_VAR" == "abc" ]
 }
 
 @test "uninstall" {
   cd /root
-  bashdot install public private
+  bashdot install shared work
 
   run bashdot dir
   [ "$output" == "/root" ]

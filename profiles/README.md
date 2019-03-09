@@ -1,1 +1,1 @@
-Different profiles which can be installed for different environments (work, personal, public, etc.).
+Different profiles which can be installed for different environments (work, home, etc.).

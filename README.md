@@ -16,7 +16,7 @@ Bashdot works by symlinking all files and directions in **profiles**, within the
 directory where bashdot is run, to files in the users home.
 
 One or more profiles can be installed on a specific computer to provide
-the desired dotfiles for it's purpose (work, home, shared, public, etc.).
+the desired dotfiles for it's purpose (work, home, etc.).
 
 ## Quick Start
 
@@ -25,10 +25,10 @@ To setup your own bashdot managed dotfiles:
 * Fork this repo to your account
 * Clone down your fork of the repo (you can clone into Dropbox or Google Drive to sync
 across multiple systems) 
-* Run the following to setup the dotfiles for the **public** profiles on this instance.
+* Run the following to setup the dotfiles for the **shared** and **home** profiles on this instance.
 
 ```
-bash bashdot install public
+bash bashdot install shared home
 ```
 
 ## Managing Multiple Profiles
@@ -38,21 +38,20 @@ Bashdot works by symlinking files within the given profile directory into your h
 For example, if you run:
 
 ```
-bash bashdot install public private
+bash bashdot install shared work
 ```
 
-Bashdot will symlink all the files in the public and private directories within profiles
+Bashdot will symlink all the files in the shared and work directories within profiles
 into your home directory while prepending a "period".
 
 The above command would create the following symlinks:
 
 ```
-lrwxrwxrwx 1 brett brett   28 Mar  8 09:03 .bashrc -> /brett/bashdot/profiles/public/bashrc
-lrwxrwxrwx 1 brett brett   40 Mar  8 09:03 .profilerc_private -> /brett/bashdot/profiles/private/profilerc_private
-lrwxrwxrwx 1 brett brett   38 Mar  8 09:03 .profilerc_public -> /brett/bashdot/profiles/public/profilerc_public
+lrwxrwxrwx 1 brett brett   28 Mar  8 09:03 .bashrc -> /brett/bashdot/profiles/shared/bashrc
+lrwxrwxrwx 1 brett brett   40 Mar  8 09:03 .profilerc_work -> /brett/bashdot/profiles/work/profilerc_work
 ```
 
-You can then make changes to files in the **public** or **private** profiles, or
+You can then make changes to files in the **shared** or **work** profiles, or
 add additional profiles as necessary.  If you use different files in different
 environments you can create a profile for each environment with the appropriate dotfiles.
 

@@ -1,0 +1,10 @@
+#
+# Sourcing profilerc files installed on system.
+#
+# Unique configuration for different profiles should be placed
+# in that profiles respective profilerc file.
+#
+for profilerc in $(ls -d ~/.profilerc_*/*); do
+    echo "Sourcing profilerc file '$profilerc'."
+    source $profilerc
+done

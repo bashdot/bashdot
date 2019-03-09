@@ -1,7 +1,0 @@
-#
-# sourcing profilerc files installed on system
-#
-for profilerc in $(ls -d ~/.profilerc_*/*); do
-    echo "Sourcing profilerc file '$profilerc'."
-    source $profilerc
-done
