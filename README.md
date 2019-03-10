@@ -86,6 +86,16 @@ on each system.
 either a) pull that information from an external system or b) encrypt it and read the decryption
 key from a location not in your dotfiles. See [here](https://gist.github.com/weavenet/f3af28350f07176674a5474b2d891102) for examples.
 
+**Q:** Can I install bashdot directly into my path?
+
+**A:** Yes, just download the bashdot file from GitHub and set it to executable:
+
+```
+curl -s https://raw.githubusercontent.com/weavenet/bashdot/master/bashdot > ${TMPDIR}/bashdot
+sudo mv ${TMPDIR}/bashdot /usr/local/bin/bashdot
+sudo chmod a+x /usr/local/bin/bashdot
+```
+
 **Q:** How can I share my bashdot profiles?
 
 **A:** Bashdot only manages dotfiles installation, not their distribution. To share your
