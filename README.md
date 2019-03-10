@@ -20,9 +20,9 @@ the desired dotfiles for it's purpose (work, home, etc.), operating
 system (Linux, MacOS, Solaris, etc.) and version (Debian, RedHat, etc.).
 
 Using a combinations of profiles, you can remove conditional logic from your bash
-scripts. For example, create a Linux profile for linux specific commands, or an
-identity profile for those specific to the identity organization. Only install
-what you need on a given system, at a specific time.
+scripts. For example, create a linux profile for Linux specific commands or
+aliases, or an identity profile for those specific to the identity organization. Only
+install what you need on a given system, at a specific time.
 
 ## Quick Start
 
