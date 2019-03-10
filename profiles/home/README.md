@@ -1,3 +1,3 @@
 ## home
 
-Sample profile containing my dotfiles for use on home systems.
+Sample profile containing dotfiles for use on home systems.
