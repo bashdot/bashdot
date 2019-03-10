@@ -1,4 +1,4 @@
-## shared
+## default
 
 Sample profile containing my dotfiles for use on both home and work systems.
 

@@ -18,15 +18,15 @@ setup() {
 
 @test "error profiles does not exist" {
   cd /tmp
-  run bashdot install shared
+  run bashdot install default
   [ "$output" == "Directory profiles does not exist in '/tmp'." ]
   [ $status = 1 ]
 }
 
 @test "error profile does not exist" {
   mkdir profiles
-  run bashdot install shared
-  [ "$output" == "Profile 'shared' directory does not exist." ]
+  run bashdot install default
+  [ "$output" == "Profile 'default' directory does not exist." ]
   [ $status = 1 ]
 }
 
@@ -39,7 +39,7 @@ setup() {
 
 @test "error uninstall profiles does not exist" {
   cd /root
-  bashdot install shared
+  bashdot install default
   run bashdot uninstall /root test
   [ "${lines[0]}" == "Profile 'test' not installed from '/root'." ]
   [ $status = 1 ]
@@ -47,24 +47,24 @@ setup() {
 
 @test "error uninstall directory does not exist" {
   cd /root
-  bashdot install shared
-  run bashdot uninstall /boom shared
-  [ "${lines[0]}" == "Profile 'shared' not installed from '/boom'." ]
+  bashdot install default
+  run bashdot uninstall /boom default
+  [ "${lines[0]}" == "Profile 'default' not installed from '/boom'." ]
   [ $status = 1 ]
 }
 
 @test "error file already exists on install" {
   touch ~/.bashrc
-  mkdir -p profiles/shared
-  touch profiles/shared/bashrc
-  run bashdot install shared
+  mkdir -p profiles/default
+  touch profiles/default/bashrc
+  run bashdot install default
   [ "${lines[2]}" == "File '/root/.bashrc' already exists, exiting." ]
   [ $status = 1 ]
 }
 
 @test "error file already in another profile" {
   cd /root
-  bashdot install shared
+  bashdot install default
 
   mkdir -p profiles/another
   touch profiles/another/bashrc
@@ -74,25 +74,25 @@ setup() {
 
 @test "install" {
   cd /root
-  run bashdot install shared work
+  run bashdot install default work
   [ "${lines[12]}" == "Completed installation of all profiles succesfully." ]
   [ $status = 0 ]
 }
 
 @test "install suceeds when profile already installed from another directory" {
   cd /root
-  bashdot install shared
+  bashdot install default
 
   cd /tmp
-  mkdir -p profiles/shared
-  touch profiles/shared/test
-  run bashdot install shared
+  mkdir -p profiles/default
+  touch profiles/default/test
+  run bashdot install default
   [ $status = 0 ]
 }
 
 @test "install bashdot profiles from another directory" {
   cd /root
-  bashdot install shared work
+  bashdot install default work
 
   cd /tmp
   mkdir -p profiles/another
@@ -103,7 +103,7 @@ setup() {
 
   run bashdot profiles
   echo "BOOM: $output"
-  [ "${lines[0]}" == "/root shared" ]
+  [ "${lines[0]}" == "/root default" ]
   [ "${lines[1]}" == "/root work" ]
   [ "${lines[2]}" == "/tmp another" ]
   [ $status = 0 ]
@@ -115,7 +115,7 @@ setup() {
 
   run bashdot links
   echo "$output"
-  [ "${lines[0]}" == "~/.bashrc -> /root/profiles/shared/bashrc" ]
+  [ "${lines[0]}" == "~/.bashrc -> /root/profiles/default/bashrc" ]
   [ "${lines[1]}" == "~/.profilerc_work -> /root/profiles/work/profilerc_work" ]
   [ "${lines[2]}" == "~/.test -> /tmp/profiles/another/test" ]
   [ $status = 0 ]
@@ -123,7 +123,7 @@ setup() {
 
 @test "validate ignored files not symlinked" {
   cd /root
-  bashdot install shared work home
+  bashdot install default work home
 
   run test -e /root/.bashrc
   [ $status = 0 ]
@@ -140,32 +140,32 @@ setup() {
 
 @test "re-install" {
   cd /root
-  bashdot install shared work
-  run bashdot install shared work
+  bashdot install default work
+  run bashdot install default work
   [ $status = 0 ]
 }
 
 @test "profiles" {
   cd /root
-  bashdot install shared work
+  bashdot install default work
   run bashdot profiles
-  [ "${lines[0]}" == "/root shared" ]
+  [ "${lines[0]}" == "/root default" ]
   [ "${lines[1]}" == "/root work" ]
   [ $status = 0 ]
 }
 
 @test "links" {
   cd /root
-  bashdot install shared work
+  bashdot install default work
   run bashdot links
-  [ "${lines[0]}" == "~/.bashrc -> /root/profiles/shared/bashrc" ]
+  [ "${lines[0]}" == "~/.bashrc -> /root/profiles/default/bashrc" ]
   [ "${lines[1]}" == "~/.profilerc_work -> /root/profiles/work/profilerc_work" ]
   [ $status = 0 ]
 }
 
 @test "dir" {
   cd /root
-  bashdot install shared work
+  bashdot install default work
   run bashdot dir
   [ "${lines[0]}" == "/root" ]
   [ $status = 0 ]
@@ -191,7 +191,7 @@ setup() {
 
 @test "profilerc is sourced" {
   cd /root
-  bashdot install shared work
+  bashdot install default work
   . ~/.bashrc
   [ "$HOME_VAR" == "" ]
   [ "$WORK_VAR" == "123" ]
@@ -203,13 +203,13 @@ setup() {
 
 @test "uninstall" {
   cd /root
-  bashdot install shared work
+  bashdot install default work
 
   run bashdot dir
   [ "$output" == "/root" ]
   [ $status = 0 ]
 
-  run bashdot uninstall /root shared
+  run bashdot uninstall /root default
   [ $status = 0 ]
 
   run bashdot uninstall /root work
@@ -226,7 +226,7 @@ setup() {
 
 @test "uninstall multiple directories" {
   cd /root
-  bashdot install shared work
+  bashdot install default work
 
   cd /tmp
   mkdir -p profiles/another
@@ -242,7 +242,7 @@ setup() {
   [ $status = 0 ]
 
   run bashdot profiles
-  [ "${lines[0]}" == "/root shared" ]
+  [ "${lines[0]}" == "/root default" ]
   [ "${lines[1]}" == "/tmp another" ]
   [ $status = 0 ]
 
@@ -255,7 +255,7 @@ setup() {
   [ $status = 0 ]
 
   run bashdot profiles
-  [ "${lines[0]}" == "/root shared" ]
+  [ "${lines[0]}" == "/root default" ]
   [ "${lines[1]}" == "" ]
   [ $status = 0 ]
 
@@ -263,7 +263,7 @@ setup() {
   [ "${lines[0]}" == "/root" ]
   [ $status = 0 ]
 
-  run bashdot uninstall /root shared
+  run bashdot uninstall /root default
   [ $status = 0 ]
 
   run bashdot profiles

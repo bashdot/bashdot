@@ -31,10 +31,10 @@ To setup your own bashdot managed dotfiles:
 * Fork this repo to your account
 * Clone down your fork of the repo (you can clone into Dropbox or Google Drive to sync
 across multiple systems) 
-* Run the following to setup the dotfiles for the **shared** and **home** profiles on this instance.
+* Run the following to setup the dotfiles for the **default** and **home** profiles on this instance.
 
 ```
-bash bashdot install shared home
+bash bashdot install default home
 ```
 
 ## Managing Multiple Profiles
@@ -44,20 +44,20 @@ Bashdot works by symlinking files within the given profile directory into your h
 For example, if you run:
 
 ```
-bash bashdot install shared work
+bash bashdot install default work
 ```
 
-Bashdot will symlink all the files in the shared and work directories within profiles
+Bashdot will symlink all the files in the default and work directories within profiles
 into your home directory while prepending a "period".
 
 The above command would create the following symlinks:
 
 ```
-lrwxrwxrwx 1 brett brett   28 Mar  8 09:03 .bashrc -> /brett/bashdot/profiles/shared/bashrc
+lrwxrwxrwx 1 brett brett   28 Mar  8 09:03 .bashrc -> /brett/bashdot/profiles/default/bashrc
 lrwxrwxrwx 1 brett brett   40 Mar  8 09:03 .profilerc_work -> /brett/bashdot/profiles/work/profilerc_work
 ```
 
-You can then make changes to files in the **shared** or **work** profiles, or
+You can then make changes to files in the **default** or **work** profiles, or
 add additional profiles as necessary.  If you use different files in different
 environments you can create a profile for each environment with the appropriate dotfiles.
 
@@ -89,12 +89,12 @@ key from a location not in your dotfiles. See [here](https://gist.github.com/wea
 **Q:** How can I share my bashdot profiles?
 
 **A:** Bashdot only manages dotfiles installation, not their distribution. To share your
-bashdot profile, make it available via source control or a file shared, then consumers can
+bashdot profile, make it available via source control or a file share, then consumers can
 download them locally to install. For example to install from git:
 
 ```
-git clone --depth 1 https://github.com/weavenet/bashdot_profiles.git
-cd bashdot_profiles
+git clone --depth 1 https://github.com/weavenet/bashdot_profiles.git /tmp/bashdot_profiles
+cd /tmp/bashdot_profiles
 bashdot install public
 ```
 
