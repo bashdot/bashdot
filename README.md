@@ -91,7 +91,7 @@ key from a location not in your dotfiles. See [here](https://gist.github.com/wea
 **A:** Yes, just download the bashdot file from GitHub and set it to executable:
 
 ```
-curl -s https://raw.githubusercontent.com/weavenet/bashdot/master/bashdot > ${TMPDIR}/bashdot
+curl -s https://raw.githubusercontent.com/weavenet/bashdot/2.0.0/bashdot > ${TMPDIR}/bashdot
 sudo mv ${TMPDIR}/bashdot /usr/local/bin/bashdot
 sudo chmod a+x /usr/local/bin/bashdot
 ```
