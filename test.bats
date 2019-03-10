@@ -30,9 +30,11 @@ setup() {
   [ $status = 1 ]
 }
 
-@test "error no bashdot profiles installed" {
+@test "error uninstall when no bashdot profiles installed" {
   run bashdot uninstall /root test
-  [ "$output" == "No '.bashdot' file in ~." ]
+  echo "boom $output"
+  [ "${lines[0]}" == "Config file '$HOME/.bashdot' not found." ]
+  [ "${lines[1]}" == "No dotfiles installed by bashdot." ]
   [ $status = 1 ]
 }
 
@@ -41,7 +43,7 @@ setup() {
   mkdir -p profiles/shared
   touch profiles/shared/bashrc
   run bashdot install shared
-  [ "${lines[2]}" == "File '.bashrc' already exists, exiting." ]
+  [ "${lines[2]}" == "File '/root/.bashrc' already exists, exiting." ]
   [ $status = 1 ]
 }
 

@@ -2,7 +2,11 @@
 
 VERSION=2.0.0
 
-DIR=`pwd`
+current_working_dir=`pwd`
+bashdot_config_file=$HOME/.bashdot
+
+# Files will not be symlinked by bashdot
+ignored_files="README.md"
 
 action=$1
 
@@ -32,13 +36,12 @@ fi
 
 install() {
     profile=$1
-    profiles_dir=$DIR/profiles
+    profiles_dir=$current_working_dir/profiles
     profile_dir=$profiles_dir/$profile
 
-    ignored_files="README.md" # Files will not be symlink into ~
 
     if [ ! -d $profiles_dir ]; then
-        echo "Directory profiles does not exist in '$DIR'."
+        echo "Directory profiles does not exist in '$current_working_dir'."
         exit 1
     fi
 
@@ -62,21 +65,21 @@ install() {
                 continue
             fi
 
-            echo "File '.bashrc' already exists, exiting."
+            echo "File '$dotfile' already exists, exiting."
             exit 1
         fi
     done
     echo "Found no existing dotfiles in home."
 
-    if [ -f ~/.bashdot ]; then
-        grep $DIR ~/.bashdot > /dev/null
+    if [ -f $bashdot_config_file ]; then
+        grep $current_working_dir $bashdot_config_file > /dev/null
 
         if [ $? -ne 0 ]; then
-            echo "Appending bashdot '$DIR' to '~/.bashdot'"
-            echo $DIR >> ~/.bashdot
+            echo "Appending bashdot '$current_working_dir' to '$bashdot_config_file'"
+            echo $current_working_dir >> $bashdot_config_file
         fi
     else
-        echo $DIR > ~/.bashdot
+        echo $current_working_dir > $bashdot_config_file
     fi
 
     echo "Installing dotfiles from '$profiles_dir'."
@@ -103,7 +106,7 @@ list_links() {
         if [[ -h ~/$i ]]; then
 
             # Only include if it points to the dotfiles directory
-            for bashdot_dir in $(cat ~/.bashdot); do
+            for bashdot_dir in $(cat $bashdot_config_file); do
                 readlink ~/$i |grep $bashdot_dir > /dev/null
                 if [ $? -eq 0 ];then
                     echo $i
@@ -114,10 +117,10 @@ list_links() {
 }
 
 list_profiles() {
-    if [ ! -f ~/.bashdot ];then
+    if [ ! -f $bashdot_config_file ];then
         echo "No dotfiles installed by bashdot."
     else
-        for dir in $(cat ~/.bashdot); do
+        for dir in $(cat $bashdot_config_file); do
             for link in $(list_links); do
                 readlink ~/$link | grep $dir > /dev/null
                 if [ $? -eq 0 ]; then
@@ -138,10 +141,10 @@ show_links() {
 }
 
 dir() {
-    if [ ! -f ~/.bashdot ];then
+    if [ ! -f $bashdot_config_file ];then
         echo "No dotfiles installed by bashdot."
     else
-        cat ~/.bashdot |sort
+        cat $bashdot_config_file |sort
     fi
 }
 
@@ -149,14 +152,16 @@ uninstall() {
     dir=$1
     profile=$2
 
-    if [ ! -f ~/.bashdot ]; then
-        echo "No '.bashdot' file in ~."
+    if [ ! -f $bashdot_config_file ]; then
+        echo "Config file '$bashdot_config_file' not found."
+        echo "No dotfiles installed by bashdot."
         exit 1
     fi
 
-    cat ~/.bashdot |grep ^$dir$ > /dev/null
+    cat $bashdot_config_file |grep ^$dir$ > /dev/null
     if [ $? -ne 0 ];then
         echo "No profiles installed from '$dir'."
+        exit 1
     fi
 
     # Loop through each file and only remove if they are a symlink
@@ -179,14 +184,14 @@ uninstall() {
     done
 
     if [ "$dir_empty" = true ]; then
-        echo "Removing '$dir' from '~/.bashdot'."
-        cat ~/.bashdot |grep -v $dir> /tmp/1
-        mv /tmp/1 ~/.bashdot
+        echo "Removing '$dir' from '$bashdot_config_file'."
+        mv $bashdot_config_file ${bashdot_config_file}.backup
+        cat ${bashdot_config_file}.backup |grep -v "^$dir$" > $bashdot_config_file
     fi
 
-    # If there are no more bashdot profiles, remove .bashdot
-    if [ ! -s ~/.bashdot ]; then
-        \rm ~/.bashdot
+    # If there are no more bashdot profiles, remove .bashdot and backup
+    if [ ! -s $bashdot_config_file ]; then
+        \rm -f $bashdot_config_file ${bashdot_config_file}.backup
     fi
 }
 

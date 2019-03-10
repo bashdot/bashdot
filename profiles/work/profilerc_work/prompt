@@ -1,2 +1,0 @@
-# Set custom prompt
-export PS1='\n\u@\h in \w ( \t $(__git_ps1 "|| %s "))\n# '

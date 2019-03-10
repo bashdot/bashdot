@@ -12,11 +12,17 @@ I am written **100% in bash**, require **no dependencies** outside of bash, and 
 
 ## Overview
 
-Bashdot works by symlinking all files and directions in **profiles**, within the current
-directory where bashdot is run, to files in the users home.
+Bashdot works by symlinking all files and directions in **profiles**, within
+the current directory where bashdot is run, to files in the users home.
 
 One or more profiles can be installed on a specific computer to provide
-the desired dotfiles for it's purpose (work, home, etc.).
+the desired dotfiles for it's purpose (work, home, etc.), operating
+system (Linux, MacOS, Solaris, etc.) and version (Debian, RedHat, etc.).
+
+Using a combinations of profiles, you can remove conditional logic from your bash
+scripts. For example, create a Linux profile for linux specific commands, or an
+identity profile for those specific to the identity organization. Only install
+what you need on a given system, at a specific time.
 
 ## Quick Start
 
@@ -79,6 +85,18 @@ on each system.
 **A:** Never check in sensitive information in your dotfiles. To remove sensitive information,
 either a) pull that information from an external system or b) encrypt it and read the decryption
 key from a location not in your dotfiles. See [here](https://gist.github.com/weavenet/f3af28350f07176674a5474b2d891102) for examples.
+
+**Q:** How can I share my bashdot profiles?
+
+**A:** Bashdot only manages dotfiles installation, not their distribution. To share your
+bashdot profile, make it available via source control or a file shared, then consumers can
+download them locally to install. For example to install from git:
+
+```
+git clone --depth 1 https://github.com/weavenet/bashdot_profiles.git
+cd bashdot_profiles
+bashdot install public
+```
 
 ## Bashdot Development
 
