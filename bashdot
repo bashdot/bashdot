@@ -42,7 +42,7 @@ install() {
     if [ -f ~/.bashdot ]; then
         bashdot_current_dir=`cat ~/.bashdot`
         if [ "$bashdot_current_dir" != "$DIR" ];then
-            echo "Profiles already installed from '$bashdot_current_dir'."
+            echo "Profiles already installed by bashdot from '$bashdot_current_dir'."
             exit 1
         fi
     fi

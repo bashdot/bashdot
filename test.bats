@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
-teardown() {
-  /bin/rm -rf ~/.bashrc ~/.profilerc* ~/.bashdot profiles/another
+setup() {
+  /bin/rm -rf ~/.bashrc ~/.profile ~/.profilerc* ~/.bashdot profiles/another
 }
 
 @test "general help" {
@@ -67,7 +67,6 @@ teardown() {
 @test "install" {
   cd /root
   run bashdot install shared work
-  echo "BOOM: $output"
   [ "${lines[12]}" == "Completed installation of all profiles succesfully." ]
   [ $status = 0 ]
 }
