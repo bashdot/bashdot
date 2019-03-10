@@ -158,9 +158,10 @@ uninstall() {
         exit 1
     fi
 
-    cat $bashdot_config_file |grep ^$dir$ > /dev/null
+    # Don't proceed with uninstall if profiles not available in given directory
+    list_profiles |grep "^$dir $profile$"
     if [ $? -ne 0 ];then
-        echo "No profiles installed from '$dir'."
+        echo "Profile '$profile' not installed from '$dir'."
         exit 1
     fi
 

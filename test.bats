@@ -32,9 +32,24 @@ setup() {
 
 @test "error uninstall when no bashdot profiles installed" {
   run bashdot uninstall /root test
-  echo "boom $output"
   [ "${lines[0]}" == "Config file '$HOME/.bashdot' not found." ]
   [ "${lines[1]}" == "No dotfiles installed by bashdot." ]
+  [ $status = 1 ]
+}
+
+@test "error uninstall profiles does not exist" {
+  cd /root
+  bashdot install shared
+  run bashdot uninstall /root test
+  [ "${lines[0]}" == "Profile 'test' not installed from '/root'." ]
+  [ $status = 1 ]
+}
+
+@test "error uninstall directory does not exist" {
+  cd /root
+  bashdot install shared
+  run bashdot uninstall /boom shared
+  [ "${lines[0]}" == "Profile 'shared' not installed from '/boom'." ]
   [ $status = 1 ]
 }
 
