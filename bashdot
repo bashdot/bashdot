@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=1.0.0
+VERSION=2.0.0
 
 DIR=`pwd`
 
@@ -9,20 +9,23 @@ action=$1
 usage() {
     case $1 in
         commands)
-            echo "Usage: `basename $0` [dir|install|list|uninstall|version] OPTIONS"
+            echo "Usage: `basename $0` [dir|install|links|profiles|uninstall|version] OPTIONS"
             ;;
         install)
             echo "Usage: `basename $0` install PROFILE1 PROFILE2 ... PROFILEN"
+            ;;
+        uninstall)
+            echo "Usage: `basename $0` uninstall DIRECTORY PROFILE"
             ;;
     esac
 }
 
 if [ "$action" != "dir" ] &&
     [ "$action" != "install" ] &&
+    [ "$action" != "links" ] &&
+    [ "$action" != "profiles" ] &&
     [ "$action" != "uninstall" ] &&
-    [ "$action" != "version" ] &&
-    [ "$action" != "list" ] &&
-    [ "$action" != "ls" ] ; then
+    [ "$action" != "version" ]; then
     usage commands
     exit 1
 fi
@@ -37,14 +40,6 @@ install() {
     if [ ! -d $profiles_dir ]; then
         echo "Directory profiles does not exist in '$DIR'."
         exit 1
-    fi
-
-    if [ -f ~/.bashdot ]; then
-        bashdot_current_dir=`cat ~/.bashdot`
-        if [ "$bashdot_current_dir" != "$DIR" ];then
-            echo "Profiles already installed by bashdot from '$bashdot_current_dir'."
-            exit 1
-        fi
     fi
 
     if [ ! -d $profile_dir ]; then
@@ -73,7 +68,16 @@ install() {
     done
     echo "Found no existing dotfiles in home."
 
-    echo $DIR > ~/.bashdot
+    if [ -f ~/.bashdot ]; then
+        grep $DIR ~/.bashdot > /dev/null
+
+        if [ $? -ne 0 ]; then
+            echo "Appending bashdot '$DIR' to '~/.bashdot'"
+            echo $DIR >> ~/.bashdot
+        fi
+    else
+        echo $DIR > ~/.bashdot
+    fi
 
     echo "Installing dotfiles from '$profiles_dir'."
     for file in `ls |grep -v $ignored_files`; do
@@ -93,17 +97,18 @@ install() {
 }
 
 list_links() {
-    dotfiles_directry=`cat ~/.bashdot`
     for i in $(ls -a ~); do
 
         # Only evaluate symlinks
         if [[ -h ~/$i ]]; then
 
             # Only include if it points to the dotfiles directory
-            ls -ld ~/$i |grep $dotfiles_directry > /dev/null
-            if [ $? -eq 0 ];then
-                echo $i
-            fi
+            for bashdot_dir in $(cat ~/.bashdot); do
+                readlink ~/$i |grep $bashdot_dir > /dev/null
+                if [ $? -eq 0 ];then
+                    echo $i
+                fi
+            done
         fi
     done
 }
@@ -112,40 +117,83 @@ list_profiles() {
     if [ ! -f ~/.bashdot ];then
         echo "No dotfiles installed by bashdot."
     else
-        for i in $(list_links); do
-            readlink ~/$i |sed -e "s/^.*\/profiles\/\(.*\)\/.*$/\1/"
+        for dir in $(cat ~/.bashdot); do
+            for link in $(list_links); do
+                readlink ~/$link | grep $dir > /dev/null
+                if [ $? -eq 0 ]; then
+                    profile=`readlink ~/$link |sed -e "s/^.*\/profiles\/\(.*\)\/.*$/\1/"`
+                    echo "$dir $profile"
+                fi
+            done
         done |sort |uniq
     fi
+}
+
+show_links() {
+    for link in $(list_links); do
+        dest=`readlink ~/$link`
+        chomped_link="${link%\\n}"
+        echo "~/$chomped_link -> $dest"
+    done
 }
 
 dir() {
     if [ ! -f ~/.bashdot ];then
         echo "No dotfiles installed by bashdot."
     else
-        cat ~/.bashdot
+        cat ~/.bashdot |sort
     fi
 }
 
 uninstall() {
+    dir=$1
+    profile=$2
+
     if [ ! -f ~/.bashdot ]; then
         echo "No '.bashdot' file in ~."
         exit 1
     fi
 
-    echo "Removing files linking to '$DIR'."
+    cat ~/.bashdot |grep ^$dir$ > /dev/null
+    if [ $? -ne 0 ];then
+        echo "No profiles installed from '$dir'."
+    fi
 
-    # Loop through each file and only reomve if they are a symlink
-    # and point to a file in the dotfiles dir
-    for i in $(list_links);do
-        echo "Removing '$i'."
-        \rm ~/$i
+    # Loop through each file and only remove if they are a symlink
+    # and point to a file in this profile in the target dir
+    for link in $(list_links);do
+        echo `readlink ~/$link` |grep ^$dir/profiles/$profile > /dev/null
+        if [ $? -eq 0 ]; then
+            echo "Removing '$link'."
+            \rm ~/$link
+        fi
     done
 
-    echo "Removing .bashdot file."
-    \rm -f ~/.bashdot
+    # If no more profiles point to this directory, remove it
+    dir_empty=true
+    for link in $(list_links); do
+        echo `readlink ~/$link` |grep ^$dir/profiles > /dev/null
+        if [ $? -eq 0 ]; then
+            dir_empty=false
+        fi
+    done
+
+    if [ "$dir_empty" = true ]; then
+        echo "Removing '$dir' from '~/.bashdot'."
+        cat ~/.bashdot |grep -v $dir> /tmp/1
+        mv /tmp/1 ~/.bashdot
+    fi
+
+    # If there are no more bashdot profiles, remove .bashdot
+    if [ ! -s ~/.bashdot ]; then
+        \rm ~/.bashdot
+    fi
 }
 
 case $action in
+    dir)
+        dir
+        ;;
     install)
         if [ $# -lt 2 ]; then
             usage install
@@ -164,14 +212,18 @@ case $action in
 
         echo "Completed installation of all profiles succesfully."
         ;;
-    dir)
-        dir
+    links)
+        show_links
         ;;
-    ls|list)
+    profiles)
         list_profiles
         ;;
     uninstall)
-        uninstall
+        if [ $# -lt 3 ]; then
+            usage uninstall
+            exit 1
+        fi
+        uninstall $2 $3
         echo "Completed uninstallation succesfully."
         ;;
     version)

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 
+## [2.0.0] - 2019-03-09
+### Changed
+- Renamed ls to profiles
+- Added links
+- Refactored to support profiles from multiple directories
+- Uninstall required directory and profile to uninstall
+
 ## [1.0.0] - 2019-03-09
 ### Added
 - Initial Release

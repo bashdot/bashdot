@@ -9,5 +9,6 @@ COPY profiles/ /root/profiles/
 COPY test.bats /root
 
 RUN chmod 755 /usr/bin/bashdot
+RUN rm -f /root/.bashrc
 
 ENTRYPOINT ["bats", "/root/test.bats"]
