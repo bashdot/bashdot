@@ -117,8 +117,8 @@ bashdot profile, make it available via source control or a file share, then cons
 download them locally to install. For example to install the public profiles from a git repo:
 
 ```
-git clone https://github.com/weavenet/bashdot_profiles
-cd profiles && bashdot install public
+git clone https://github.com/weavenet/bashdot_public_profile
+cd bashdot_public_profile && bashdot install public
 ```
 
 **Q:** Does bashdot work with zsh?
