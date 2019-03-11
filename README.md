@@ -43,7 +43,7 @@ Manual Installation
 cd $TMPDIR
 curl -s https://codeload.github.com/weavenet/bashdot/tar.gz/2.0.0 > bashdot-2.0.0.tar.gz
 tar xf bashdot-2.0.0.tar.gz
-sudo cp bashdot /usr/local/bin
+sudo cp bashdot-2.0.0/bashdot /usr/local/bin
 chmod a+x /usr/local/bin/bashdot
 ```
 
