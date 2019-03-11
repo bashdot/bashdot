@@ -28,13 +28,37 @@ install what you need on a given system, at a specific time.
 
 To setup your own bashdot managed dotfiles:
 
-* Fork this repo to your account
-* Clone down your fork of the repo (you can clone into Dropbox or Google Drive to sync
-across multiple systems) 
-* Run the following to setup the dotfiles for the **default** and **home** profiles on this instance.
+* Install Bashdot
+
+MacOS Homebrew
 
 ```
-bash bashdot install default home
+brew tap weavenet/tap
+brew install bashdot
+```
+
+Manual Installation
+
+```
+cd $TMPDIR
+curl -s https://codeload.github.com/weavenet/bashdot/tar.gz/2.0.0 > bashdot-2.0.0.tar.gz
+tar xf bashdot-2.0.0.tar.gz
+sudo cp bashdot /usr/local/bin
+chmod a+x /usr/local/bin/bashdot
+```
+
+* Clone the starter bashdot profiles repo
+
+```
+git clone https://github.com/weavenet/bashdot_profiles
+```
+
+* Change into the bashdot_profiles directory and run the below command to setup the
+**default** and **home** profiles on this instance.
+
+```
+cd bashdot_profiles
+bashdot install default home
 ```
 
 ## Managing Multiple Profiles
@@ -44,7 +68,7 @@ Bashdot works by symlinking files within the given profile directory into your h
 For example, if you run:
 
 ```
-bash bashdot install default work
+bashdot install default work
 ```
 
 Bashdot will symlink all the files in the default and work directories within profiles
@@ -86,27 +110,20 @@ on each system.
 either a) pull that information from an external system or b) encrypt it and read the decryption
 key from a location not in your dotfiles. See [here](https://gist.github.com/weavenet/f3af28350f07176674a5474b2d891102) for examples.
 
-**Q:** Can I install bashdot directly into my path?
-
-**A:** Yes, just download the bashdot file from GitHub and set it to executable:
-
-```
-curl -s https://raw.githubusercontent.com/weavenet/bashdot/2.0.0/bashdot > ${TMPDIR}/bashdot
-sudo mv ${TMPDIR}/bashdot /usr/local/bin/bashdot
-sudo chmod a+x /usr/local/bin/bashdot
-```
-
 **Q:** How can I share my bashdot profiles?
 
 **A:** Bashdot only manages dotfiles installation, not their distribution. To share your
 bashdot profile, make it available via source control or a file share, then consumers can
-download them locally to install. For example to install from git:
+download them locally to install. For example to install the public profiles from a git repo:
 
 ```
-git clone --depth 1 https://github.com/weavenet/bashdot_profiles.git /tmp/bashdot_profiles
-cd /tmp/bashdot_profiles
-bashdot install public
+git clone https://github.com/weavenet/bashdot_profiles
+cd profiles && bashdot install public
 ```
+
+**Q:** Does bashdot work with zsh?
+
+**A:** Yes
 
 ## Bashdot Development
 
