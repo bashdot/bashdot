@@ -61,12 +61,12 @@ You can then make changes to files in the **default** or **work** profiles, or
 add additional profiles as necessary.  If you use different files in different
 environments you can create a profile for each environment with the appropriate dotfiles.
 
-Since the files are symlinked from home, if you keep the files in a shared
-drive, changes to files on one instance will automatically be reflected on all
+Since the files are symlinked into your home directory, if you keep the bashdot directory
+on a shared drive, changes to files on one instance will automatically be reflected on all
 instances with that profile installed.
 
-The default **.bashrc** will load anything in file prepended with **profilerc** to
-allow for doing any specific setup for the a profile. See
+The default **.bashrc** will load anything in a file prepended with **profilerc** to
+allow for running shell commands for that profile's setup. See
 [profiles](https://github.com/weavenet/bashdot/tree/master/profiles)
 for examples of profiles with different variables initialized.
 
