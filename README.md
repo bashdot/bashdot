@@ -121,9 +121,14 @@ git clone https://github.com/bashdot/bashdot_public_profile
 cd bashdot_public_profile && bashdot install public
 ```
 
-**Q:** Does bashdot work with zsh?
+**Q:** Does bashdot work with zsh, fish or other shells?
 
-**A:** Yes
+**A:** Yes. Bashdot works by using standard unix commands and symlinks. It should work
+on any system that has bash installed.
+
+**Q:** Then why is it called bashdot?
+
+**A:** It is a 100% self contained bash script with no dependencies.
 
 ## Bashdot Development
 
