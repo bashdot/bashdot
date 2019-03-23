@@ -36,7 +36,7 @@ install what you need on a given system, at a specific time.
     brew install bashdot
     ```
 
-1. Manual Installation
+    Manual Installation
 
     ```sh
     cd $TMPDIR
