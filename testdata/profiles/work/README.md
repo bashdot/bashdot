@@ -1,3 +1,3 @@
 ## work
 
-Sample profile containing dotfiles for use on work systems.
+Test profile containing dotfiles for use on work systems.

@@ -8,7 +8,8 @@ I am a minimalist dotfile management framework focused on supporting multiple
 profiles, providing different configurations based on the profiles installed
 on a given system.
 
-I am written **100% in bash**, require **no dependencies** outside of bash, and am [tested](https://circleci.com/gh/bashdot/bashdot/tree/master) using [bats](https://github.com/sstephenson/bats).
+I am written **100% in bash**, require **no dependencies** outside of bash, and am
+[tested](https://circleci.com/gh/bashdot/bashdot/tree/master) using [bats](https://github.com/sstephenson/bats).
 
 ## Overview
 
@@ -20,46 +21,44 @@ the desired dotfiles for it's purpose (work, home, etc.), operating
 system (Linux, MacOS, Solaris, etc.) and version (Debian, RedHat, etc.).
 
 Using a combinations of profiles, you can remove conditional logic from your bash
-scripts. For example, create a linux profile for Linux specific commands or
+scripts. For example, create a Linux profile for Linux specific commands or
 aliases, or an identity profile for those specific to the identity organization. Only
 install what you need on a given system, at a specific time.
 
 ## Quick Start
 
-To setup your own bashdot managed dotfiles:
+1. Install Bashdot
 
-* Install Bashdot
+    MacOS Homebrew
 
-MacOS Homebrew
+    ```sh
+    brew tap bashdot/tap
+    brew install bashdot
+    ```
 
-```
-brew tap bashdot/tap
-brew install bashdot
-```
+1. Manual Installation
 
-Manual Installation
+    ```sh
+    cd $TMPDIR
+    curl -s https://codeload.github.com/bashdot/bashdot/tar.gz/2.0.0 > bashdot-2.0.0.tar.gz
+    tar xf bashdot-2.0.0.tar.gz
+    sudo cp bashdot-2.0.0/bashdot /usr/local/bin
+    chmod a+x /usr/local/bin/bashdot
+    ```
 
-```
-cd $TMPDIR
-curl -s https://codeload.github.com/bashdot/bashdot/tar.gz/2.0.0 > bashdot-2.0.0.tar.gz
-tar xf bashdot-2.0.0.tar.gz
-sudo cp bashdot-2.0.0/bashdot /usr/local/bin
-chmod a+x /usr/local/bin/bashdot
-```
+1. Clone the starter bashdot profiles repo
 
-* Clone the starter bashdot profiles repo
+    ```sh
+    git clone https://github.com/bashdot/bashdot_profiles
+    ```
 
-```
-git clone https://github.com/bashdot/bashdot_profiles
-```
-
-* Change into the bashdot_profiles directory and run the below command to setup the
+1. Change into the bashdot_profiles directory and run the below command to setup the
 **default** and **home** profiles on this instance.
 
-```
-cd bashdot_profiles
-bashdot install default home
-```
+    ```sh
+    cd bashdot_profiles
+    bashdot install default home
+    ```
 
 ## Managing Multiple Profiles
 
@@ -67,7 +66,7 @@ Bashdot works by symlinking files within the given profile directory into your h
 
 For example, if you run:
 
-```
+```sh
 bashdot install default work
 ```
 
@@ -76,7 +75,7 @@ into your home directory while prepending a "period".
 
 The above command would create the following symlinks:
 
-```
+```sh
 lrwxrwxrwx 1 brett brett   28 Mar  8 09:03 .bashrc -> /brett/bashdot/profiles/default/bashrc
 lrwxrwxrwx 1 brett brett   40 Mar  8 09:03 .profilerc_work -> /brett/bashdot/profiles/work/profilerc_work
 ```
@@ -89,7 +88,7 @@ Since the files are symlinked into your home directory, if you keep the bashdot 
 on a shared drive, changes to files on one instance will automatically be reflected on all
 instances with that profile installed.
 
-The default **.bashrc** will load anything in a file prepended with **profilerc** to
+The default **.bashrc** will load anything in a file prepended with **.profilerc** to
 allow for running shell commands for that profile's setup. See
 [profiles](https://github.com/bashdot/bashdot/tree/master/profiles)
 for examples of profiles with different variables initialized.
@@ -108,7 +107,8 @@ on each system.
 
 **A:** Never check in sensitive information in your dotfiles. To remove sensitive information,
 either a) pull that information from an external system or b) encrypt it and read the decryption
-key from a location not in your dotfiles. See [here](https://gist.github.com/bashdot/f3af28350f07176674a5474b2d891102) for examples.
+key from a location not in your dotfiles. See [here](https://gist.github.com/bashdot/f3af28350f07176674a5474b2d891102)
+for examples.
 
 **Q:** How can I share my bashdot profiles?
 
@@ -116,17 +116,17 @@ key from a location not in your dotfiles. See [here](https://gist.github.com/bas
 bashdot profile, make it available via source control or a file share, then consumers can
 download them locally to install. For example to install the public profiles from a git repo:
 
-```
-git clone https://github.com/bashdot/bashdot_public_profile
-cd bashdot_public_profile && bashdot install public
-```
+    ```sh
+    git clone https://github.com/bashdot/bashdot_public_profile
+    cd bashdot_public_profile && bashdot install public
+    ```
 
 **Q:** Does bashdot work with zsh, fish or other shells?
 
 **A:** Yes. Bashdot works by using standard unix commands and symlinks. It should work
 on any system that has bash installed.
 
-**Q:** Then why is it called bashdot?
+**Q:** If bashdot supports non bash shells, why is it called bashdot?
 
 **A:** It is a 100% self contained bash script with no dependencies.
 
@@ -136,6 +136,6 @@ on any system that has bash installed.
 
 Only requirement to run tests is [docker](https://docs.docker.com/install/). Once installed run:
 
-```
+```sh
 make test
 ```
