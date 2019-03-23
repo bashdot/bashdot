@@ -66,19 +66,19 @@ Bashdot works by symlinking files within the given profile directory into your h
 
 For example, if you run:
 
-```sh
-bashdot install default work
-```
+    ```sh
+    bashdot install default work
+    ```
 
 Bashdot will symlink all the files in the default and work directories within profiles
 into your home directory while prepending a "period".
 
 The above command would create the following symlinks:
 
-```sh
-lrwxrwxrwx 1 brett brett   28 Mar  8 09:03 .bashrc -> /brett/bashdot/profiles/default/bashrc
-lrwxrwxrwx 1 brett brett   40 Mar  8 09:03 .profilerc_work -> /brett/bashdot/profiles/work/profilerc_work
-```
+    ```sh
+    lrwxrwxrwx 1 brett brett   28 Mar  8 09:03 .bashrc -> /brett/bashdot/profiles/default/bashrc
+    lrwxrwxrwx 1 brett brett   40 Mar  8 09:03 .profilerc_work -> /brett/bashdot/profiles/work/profilerc_work
+    ```
 
 You can then make changes to files in the **default** or **work** profiles, or
 add additional profiles as necessary.  If you use different files in different
@@ -136,6 +136,6 @@ on any system that has bash installed.
 
 Only requirement to run tests is [docker](https://docs.docker.com/install/). Once installed run:
 
-```sh
-make test
-```
+    ```sh
+    make test
+    ```
