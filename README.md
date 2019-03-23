@@ -39,11 +39,9 @@ install what you need on a given system, at a specific time.
     Manual Installation
 
     ```sh
-    cd $TMPDIR
-    curl -s https://codeload.github.com/bashdot/bashdot/tar.gz/2.0.0 > bashdot-2.0.0.tar.gz
-    tar xf bashdot-2.0.0.tar.gz
-    sudo cp bashdot-2.0.0/bashdot /usr/local/bin
-    chmod a+x /usr/local/bin/bashdot
+    curl -s https://raw.githubusercontent.com/bashdot/bashdot/2.0.0/bashdot > bashdot
+    sudo mv bashdot /usr/local/bin
+    sudo chmod a+x /usr/local/bin/bashdot
     ```
 
 1. Clone the starter bashdot profiles repo
@@ -59,6 +57,8 @@ install what you need on a given system, at a specific time.
     cd bashdot_profiles
     bashdot install default home
     ```
+
+1. Update the profiles directory with your dotfiles.
 
 ## Managing Multiple Profiles
 
