@@ -12,8 +12,9 @@ the script using [bats](https://github.com/sstephenson/bats).
 
 ## Overview
 
-Bashdot works by symlinking all files and directions in **profiles**, within
-the current directory where bashdot is run, to files in the users home.
+Bashdot works by symlinking all files and directions in a given profile
+directory, within the current directory where bashdot is run, to files
+in the users home.
 
 One or more profiles can be installed on a specific computer to provide
 the desired dotfiles for it's purpose (work, home, etc.), operating
@@ -22,7 +23,7 @@ system (Linux, MacOS, Solaris, etc.) and version (Debian, RedHat, etc.).
 Using a combinations of profiles, you can remove conditional logic from your bash
 scripts. For example, create a Linux profile for Linux specific commands or
 aliases, or an operations profile for those specific to the operations
-organization. Only install what you need on a given system, at a specific time.
+organization. Only install what you need on a given system.
 
 Bashdot supports templates for replacing values in files during installation.
 
@@ -40,12 +41,12 @@ Bashdot supports templates for replacing values in files during installation.
     Manual Installation
 
     ```sh
-    curl -s https://raw.githubusercontent.com/bashdot/bashdot/4.0.0/bashdot > bashdot
+    curl -s https://raw.githubusercontent.com/bashdot/bashdot/4.0.1/bashdot > bashdot
     sudo mv bashdot /usr/local/bin
     sudo chmod a+x /usr/local/bin/bashdot
     ```
 
-1. Clone the starter bashdot profiles repo
+1. Clone the **bashdot_profiles** starter repo
 
     ```sh
     git clone https://github.com/bashdot/bashdot_profiles
@@ -59,8 +60,7 @@ Bashdot supports templates for replacing values in files during installation.
     bashdot install default home
     ```
 
-1. Update the profiles directory with your dotfiles, check it into source or store it
-in a cloud drive.
+1. Update the directory with your dotfiles, check it into source or store it in a cloud drive.
 
 ## Templates
 
@@ -109,10 +109,12 @@ For example, if you run:
 bashdot install default work
 ```
 
-Bashdot will symlink all the files in the default and work directories within profiles
-into your home directory while prepending a "period".
+Bashdot will symlink all the files in the default and work into your home directory
+while prepending a period (prepending a period prevents all files from being hidden in
+the source directory).
 
-The above command would create the following symlinks:
+When run in the [starter repo](https://github.com/bashdot/bashdot_profiles), the above command
+would create the following symlinks:
 
 ```sh
 lrwxrwxrwx 1 brett brett   28 Mar  8 09:03 .bashrc -> /brett/bashdot/profiles/default/bashrc
@@ -120,8 +122,8 @@ lrwxrwxrwx 1 brett brett   40 Mar  8 09:03 .profilerc_work -> /brett/bashdot/pro
 ```
 
 You can then make changes to files in the **default** or **work** profiles, or
-add additional profiles as necessary.  If you use different files in different
-environments you can create a profile for each environment with the appropriate dotfiles.
+add additional profiles as necessary. Re-run bashdot install to link any newly
+created files or directories.
 
 Since the files are symlinked into your home directory, if you keep the bashdot directory
 on a shared drive, changes to files on one instance will automatically be reflected on all
@@ -139,22 +141,21 @@ key from a location not in your dotfiles or c) leverage templates (described abo
 **Q:** How can I share my bashdot profiles?
 
 **A:** Bashdot only manages dotfiles installation, not their distribution. To share your
-bashdot profile, make it available via source control or a file share, then consumers can
-download them locally, and install them with bashdot.
+bashdot profile, make it available via source control or a file share.
 
 For example to install the public profiles from a Git repo:
 
 ```sh
 git clone https://github.com/bashdot/bashdot_public_profile
-cd bashdot_public_profile && bashdot install public
+bashdot install bashdot_public_profile
 ```
 
 **Q:** Does bashdot work with zsh, fish or other shells?
 
-**A:** Yes. Bashdot works by using standard unix commands and symlinks. It should work
-on any system that has bash installed.
+**A:** Yes. Bashdot works by using standard unix commands and symlinks. It should work 
+with any shell on a system that has bash installed.
 
-**Q:** If bashdot supports non bash shells, why is it called bashdot?
+**Q:** If bashdot supports other shells, why is it called bashdot?
 
 **A:** It is a 100% self contained bash script with no dependencies.
 
@@ -166,6 +167,14 @@ Only requirement to run tests is [docker](https://docs.docker.com/install/). Onc
 
 ```sh
 make test
+```
+
+### Shell
+
+To shell into a container to test bashdot without affecting your local environment run:
+
+```
+make shell
 ```
 
 ### Debug
