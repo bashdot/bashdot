@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
 setup() {
-  /bin/rm -rf ~/.bashrc ~/.profile ~/.profilerc* ~/.bashdot profiles/another ~/.test
+  /bin/rm -rf ~/.bashrc ~/.profile ~/.profilerc* ~/.bashdot profiles/another ~/.test ~/.env
 }
 
 @test "general help" {
@@ -16,17 +16,23 @@ setup() {
   [ $status = 1 ]
 }
 
+@test "uninstall help" {
+  run bashdot uninstall
+  [ "$output" == "Usage: bashdot uninstall DIRECTORY PROFILE" ]
+  [ $status = 1 ]
+}
+
 @test "error profiles does not exist" {
   cd /tmp
   run bashdot install default
 
-  echo $output | grep "Directory profiles does not exist in '/tmp'."
+  echo $output | grep "Directory 'profiles' does not exist in '/tmp'."
   [ $status = 1 ]
 }
 
 @test "error invalid profile name" {
   run bashdot install test,test
-  echo $output | grep "Invalid profile name 'test,test'. Profiles must be alpha number with dashes or underscores."
+  echo $output | grep "Invalid profile name 'test,test'. Profiles must be alpha number with only dashes or underscores."
   [ $status = 1 ]
 }
 
@@ -84,6 +90,16 @@ setup() {
   run bashdot install default work
   echo $output | grep "Completed installation of all profiles succesfully."
   [ $status = 0 ]
+}
+
+@test "installing rendered file" {
+  cd /root
+  run env APP_SECRET_KEY=test1234 bashdot install rendered
+  echo $output | grep "Completed installation of all profiles succesfully."
+  cat /root/.env | grep 'export APP_SECRET_KEY=test1234'
+
+  run sum /root/.env
+  echo $output | grep '58480'
 }
 
 @test "install suceeds when profile already installed from another directory" {
@@ -209,7 +225,7 @@ setup() {
 
 @test "version" {
   run bashdot version
-  [ "$output" == "2.1.0" ]
+  [ "$output" == "3.0.0" ]
   [ $status = 0 ]
 }
 
@@ -299,5 +315,17 @@ setup() {
   [ $status = 0 ]
 
   run test -f ~/.bashdot
+  [ $status = 1 ]
+}
+
+@test "uninstall rendered file" {
+  cd /root
+  env APP_SECRET_KEY=test1234 bashdot install rendered
+  bashdot uninstall /root rendered
+
+  run test -f /root/.env
+  [ $status = 1 ]
+
+  run test -f /root/profiles/rendered/env.rendered
   [ $status = 1 ]
 }

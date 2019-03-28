@@ -2,14 +2,14 @@
 
 # Summary
 
-I am **bashdot**.
+I am **bashdot**, a minimalist dotfile management framework.
 
-I am a minimalist dotfile management framework focused on supporting multiple
-profiles, providing different configurations based on the profiles installed
-on a given system.
+I am a **single script**, written **entirely in bash**, which requires **no additional dependencies**.
 
-I am written **100% in bash**, require **no dependencies** outside of bash, and am
-[tested](https://circleci.com/gh/bashdot/bashdot/tree/master) using [bats](https://github.com/sstephenson/bats).
+The authors of bashdot focus on transparency in the code, providing
+clear log output (you should know what is run on your system) and
+heavily [testing](https://circleci.com/gh/bashdot/bashdot/tree/master) the
+script using [bats](https://github.com/sstephenson/bats).
 
 ## Overview
 
@@ -22,8 +22,10 @@ system (Linux, MacOS, Solaris, etc.) and version (Debian, RedHat, etc.).
 
 Using a combinations of profiles, you can remove conditional logic from your bash
 scripts. For example, create a Linux profile for Linux specific commands or
-aliases, or an identity profile for those specific to the identity organization. Only
-install what you need on a given system, at a specific time.
+aliases, or an operations profile for those specific to the operations
+organization. Only install what you need on a given system, at a specific time.
+
+Bashdot supports templates for replacing values in files during installation.
 
 ## Quick Start
 
@@ -39,7 +41,7 @@ install what you need on a given system, at a specific time.
     Manual Installation
 
     ```sh
-    curl -s https://raw.githubusercontent.com/bashdot/bashdot/2.1.0/bashdot > bashdot
+    curl -s https://raw.githubusercontent.com/bashdot/bashdot/3.0.0/bashdot > bashdot
     sudo mv bashdot /usr/local/bin
     sudo chmod a+x /usr/local/bin/bashdot
     ```
@@ -58,7 +60,44 @@ install what you need on a given system, at a specific time.
     bashdot install default home
     ```
 
-1. Update the profiles directory with your dotfiles.
+1. Update the profiles directory with your dotfiles, check it into source or store it
+in a cloud drive.
+
+## Templates
+
+If you have values which need to be set in a file when bashdot is run, you can create a template.
+
+1. Append **.template** to any files which should be rendered.
+
+1. Template files will have all variables replaced with the current environment variables when
+bashdot is run.
+
+1. The rendered files will have **.template** replaced with **.rendered** in the same directory.
+
+1. For example:
+
+    If you have the file **profiles/home/env.template** with the below contents:
+
+    ```sh
+    export SECRET_KEY=$ENV_SECRET_KEY
+    ```
+
+    You can run the following to set the value **ENV_SECRET_KEY** when installing the home profile:
+
+    ```sh
+    env ENV_SECRET_KEY=test1234 bashdot install home
+    ```
+
+    This will result in the following rendered file as **profiles/home/env.rendered** and symlinkd to **~/.env**
+
+    ```sh
+    env SECRET_KEY=test1234
+    ```
+
+1. These files will then be symlinked into your home directory like any other bashdot managed file.
+
+1. Be sure to include **\*\*/\*.rendered** in **.gitignore** if you will be checking your dotfiles
+into a Git repo.
 
 ## Managing Multiple Profiles
 
@@ -88,33 +127,22 @@ Since the files are symlinked into your home directory, if you keep the bashdot 
 on a shared drive, changes to files on one instance will automatically be reflected on all
 instances with that profile installed.
 
-The default **.bashrc** will load anything in a file prepended with **.profilerc** to
-allow for running shell commands for that profile's setup. See
-[profiles](https://github.com/bashdot/bashdot/tree/master/profiles)
-for examples of profiles with different variables initialized.
-
 ## Frequently Asked Questions
-
-**Q:** Does bashdot support templates or user input for configuring dotfiles during installation?
-
-**A:** No, if you have different configurations of a single dotfile, bashdot handles that
-by supporting multiple profiles. For example if you want to setup differnet **.gitconfig**
-for your **home** and **work** environments, create a home and work profile, and within each of
-those profiles add the appropriate gitconfig, then use bashdot to install the approriate profile
-on each system.
 
 **Q:** What if I have secrets or other private information to install in my dotfile?
 
 **A:** Never check in sensitive information in your dotfiles. To remove sensitive information,
-either a) pull that information from an external system or b) encrypt it and read the decryption
-key from a location not in your dotfiles. See [here](https://gist.github.com/bashdot/f3af28350f07176674a5474b2d891102)
-for examples.
+either a) pull that information from an external system b) encrypt it and read the decryption
+key from a location not in your dotfiles or c) leverage templates (described above). See
+[here](https://gist.github.com/bashdot/f3af28350f07176674a5474b2d891102) for examples.
 
 **Q:** How can I share my bashdot profiles?
 
 **A:** Bashdot only manages dotfiles installation, not their distribution. To share your
 bashdot profile, make it available via source control or a file share, then consumers can
-download them locally to install. For example to install the public profiles from a git repo:
+download them locally, and install them with bashdot.
+
+For example to install the public profiles from a Git repo:
 
 ```sh
 git clone https://github.com/bashdot/bashdot_public_profile
@@ -138,4 +166,12 @@ Only requirement to run tests is [docker](https://docs.docker.com/install/). Onc
 
 ```sh
 make test
+```
+
+### Debug
+
+To increase logging, set the **BASHDOT_LOG_LEVEL** environment variable to **debug**.
+
+```
+export BASHDOT_LOG_LEVEL=debug
 ```
