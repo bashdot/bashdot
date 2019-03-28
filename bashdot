@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=3.0.0
+VERSION=4.0.0
 
 current_working_dir=`pwd`
 bashdot_config_file=$HOME/.bashdot
@@ -37,7 +37,7 @@ fi
 
 exit_if_invalid_profile_name() {
     profile=$1
-    echo $profile | grep "^[a-zA-Z0-9_-]*$"
+    echo $profile | grep "^[a-zA-Z0-9_-]*$" > /dev/null
     if [ $? -ne 0 ]; then
         log error "Invalid profile name '$profile'. Profiles must be alpha number with only dashes or underscores."
         exit 1
@@ -69,22 +69,17 @@ link_dotfile() {
         return
     fi
 
+    log debug "'$dotfile' does not link to desired target '$source_file'."
     log info "Linking '$source_file' to '$dotfile'."
     ln -s $source_file $dotfile
 }
 
 install() {
     profile=$1
-    profiles_dir=$current_working_dir/profiles
-    profile_dir=$profiles_dir/$profile
+    profile_dir=$current_working_dir/$profile
     
     # Space seperated list of files that will not be symlinked by bashdot
     ignored_files="README.md"
-
-    if [ ! -d $profiles_dir ]; then
-        log error "Directory 'profiles' does not exist in '$current_working_dir'."
-        exit 1
-    fi
 
     if [ ! -d $profile_dir ]; then
         log error "Profile '$profile' directory does not exist."
@@ -130,7 +125,7 @@ install() {
         fi
     done
 
-    log info "Installing dotfiles from '$profiles_dir'."
+    log info "Installing dotfiles from '$profile_dir'."
     for file in `ls |grep -v $ignored_files`; do
         source_file=$profile_dir/$file
 
@@ -160,16 +155,17 @@ EOF" > $rendered_file_path 2> /dev/null
 }
 
 list_links() {
-    for i in $(ls -a ~); do
+    for file in $(ls -a ~); do
 
         # Only evaluate symlinks
-        if [[ -h ~/$i ]]; then
+        if [[ -h ~/$file ]]; then
 
             # Only include if it points to the dotfiles directory
             for bashdot_dir in $(cat $bashdot_config_file); do
-                readlink ~/$i |egrep "^$bashdot_dir/profiles" > /dev/null
+                expected_target_file_name=`basename $file | cut -c 2-`
+                readlink ~/$file |egrep "^$bashdot_dir/[a-zA-Z0-9_-]*/$expected_target_file_name$" > /dev/null
                 if [ $? -eq 0 ];then
-                    echo $i
+                    echo $file
                 fi
             done
         fi
@@ -182,9 +178,10 @@ list_profiles() {
     else
         for dir in $(cat $bashdot_config_file); do
             for link in $(list_links); do
-                readlink ~/$link | egrep "^$dir/profiles" > /dev/null
+                expected_target_file_name=`basename $link | cut -c 2-`
+                readlink ~/$link | egrep "^$dir/[a-zA-Z0-9_-]*/$expected_target_file_name$" > /dev/null
                 if [ $? -eq 0 ]; then
-                    profile=`readlink ~/$link |sed -e "s/^.*\/profiles\/\(.*\)\/.*$/\1/"`
+                    profile=`readlink ~/$link |sed -e "s/^.*\/[a-zA-Z0-9_-]*\/\(.*\)\/.*$/\1/"`
                     echo "$dir $profile"
                 fi
             done
@@ -219,7 +216,7 @@ uninstall() {
     fi
 
     # Don't proceed with uninstall if profiles not available in given directory
-    list_profiles |grep "^$dir $profile$"
+    list_profiles |grep "^$dir $profile$" > /dev/null
     if [ $? -ne 0 ];then
         log error "Profile '$profile' not installed from '$dir'."
         exit 1
@@ -228,12 +225,13 @@ uninstall() {
     # Loop through each file and only remove if they are a symlink
     # and point to a file in this profile in the target dir
     for link in $(list_links);do
+        log debug "Evaluating '$link' for removal."
         target=`readlink ~/$link`
 
         # Check if link target is part of this bashdot profile
-        echo $target |grep ^$dir/profiles/$profile > /dev/null
+        expected_target_file_name=`basename $link | cut -c 2-`
+        echo $target |egrep "^$dir/$profile/${expected_target_file_name}$" > /dev/null
         if [ $? -eq 0 ]; then
-
             # If a link target was rendered from a template, remove
             # the rendered file on uninstall
             echo $target |egrep '\.rendered$' > /dev/null
@@ -246,13 +244,19 @@ uninstall() {
             \rm ~/$link
         fi
     done
+    log debug "All links for profile '$profile' removed."
 
     # If no more profiles point to this directory, remove it
+    log debug "Updating bashdot config file '$bashdot_config_file'."
     dir_empty=true
     for link in $(list_links); do
-        echo `readlink ~/$link` |grep ^$dir/profiles > /dev/null
+        log debug "Evaluating if '$link' is part of a bashdot profile in dir '$dir'."
+        expected_target_file_name=`basename $link | cut -c 2-`
+        echo `readlink ~/$link` |egrep "^$dir/[a-zA-Z0-9_-]*/${expected_target_file_name}$" > /dev/null
         if [ $? -eq 0 ]; then
+            log debug "'$link' is part of a bashdot profile in '$dir', not removing '$dir' from '$bashdot_config_file'."
             dir_empty=false
+            break
         fi
     done
 

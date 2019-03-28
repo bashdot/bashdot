@@ -41,7 +41,7 @@ Bashdot supports templates for replacing values in files during installation.
     Manual Installation
 
     ```sh
-    curl -s https://raw.githubusercontent.com/bashdot/bashdot/3.0.0/bashdot > bashdot
+    curl -s https://raw.githubusercontent.com/bashdot/bashdot/4.0.0/bashdot > bashdot
     sudo mv bashdot /usr/local/bin
     sudo chmod a+x /usr/local/bin/bashdot
     ```

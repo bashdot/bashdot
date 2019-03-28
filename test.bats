@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
 setup() {
-  /bin/rm -rf ~/.bashrc ~/.profile ~/.profilerc* ~/.bashdot profiles/another ~/.test ~/.env
+  /bin/rm -rf ~/.bashrc ~/.profile ~/.profilerc* ~/.bashdot another ~/.test ~/.env
 }
 
 @test "general help" {
@@ -22,14 +22,6 @@ setup() {
   [ $status = 1 ]
 }
 
-@test "error profiles does not exist" {
-  cd /tmp
-  run bashdot install default
-
-  echo $output | grep "Directory 'profiles' does not exist in '/tmp'."
-  [ $status = 1 ]
-}
-
 @test "error invalid profile name" {
   run bashdot install test,test
   echo $output | grep "Invalid profile name 'test,test'. Profiles must be alpha number with only dashes or underscores."
@@ -37,7 +29,6 @@ setup() {
 }
 
 @test "error profile does not exist" {
-  mkdir profiles
   run bashdot install default
   echo $output | grep "Profile 'default' directory does not exist."
   [ $status = 1 ]
@@ -68,8 +59,8 @@ setup() {
 
 @test "error file already exists on install" {
   touch ~/.bashrc
-  mkdir -p profiles/default
-  touch profiles/default/bashrc
+  mkdir -p default
+  touch default/bashrc
   run bashdot install default
   echo $output | grep "File '/root/.bashrc' already exists, exiting."
   [ $status = 1 ]
@@ -79,8 +70,8 @@ setup() {
   cd /root
   bashdot install default
 
-  mkdir -p profiles/another
-  touch profiles/another/bashrc
+  mkdir -p another
+  touch another/bashrc
   run bashdot install another
   [ $status = 1 ]
 }
@@ -107,8 +98,8 @@ setup() {
   bashdot install default
 
   cd /tmp
-  mkdir -p profiles/default
-  touch profiles/default/test
+  mkdir -p default
+  touch default/test
   run bashdot install default
   [ $status = 0 ]
 }
@@ -118,8 +109,8 @@ setup() {
   bashdot install default work
 
   cd /tmp
-  mkdir -p profiles/another
-  touch profiles/another/test
+  mkdir another
+  touch another/test
 
   run bashdot install another
   [ $status = 0 ]
@@ -138,9 +129,9 @@ setup() {
 
   run bashdot links
   echo "$output"
-  [ "${lines[0]}" == "~/.bashrc -> /root/profiles/default/bashrc" ]
-  [ "${lines[1]}" == "~/.profilerc_work -> /root/profiles/work/profilerc_work" ]
-  [ "${lines[2]}" == "~/.test -> /tmp/profiles/another/test" ]
+  [ "${lines[0]}" == "~/.bashrc -> /root/default/bashrc" ]
+  [ "${lines[1]}" == "~/.profilerc_work -> /root/work/profilerc_work" ]
+  [ "${lines[2]}" == "~/.test -> /tmp/another/test" ]
   [ $status = 0 ]
 }
 
@@ -198,8 +189,8 @@ setup() {
   cd /root
   bashdot install default work
   run bashdot links
-  [ "${lines[0]}" == "~/.bashrc -> /root/profiles/default/bashrc" ]
-  [ "${lines[1]}" == "~/.profilerc_work -> /root/profiles/work/profilerc_work" ]
+  [ "${lines[0]}" == "~/.bashrc -> /root/default/bashrc" ]
+  [ "${lines[1]}" == "~/.profilerc_work -> /root/work/profilerc_work" ]
   [ $status = 0 ]
 }
 
@@ -225,7 +216,7 @@ setup() {
 
 @test "version" {
   run bashdot version
-  [ "$output" == "3.0.0" ]
+  [ "$output" == "4.0.0" ]
   [ $status = 0 ]
 }
 
@@ -269,8 +260,8 @@ setup() {
   bashdot install default work
 
   cd /tmp
-  mkdir -p profiles/another
-  touch profiles/another/test
+  mkdir -p another
+  touch another/test
   bashdot install another
 
   run bashdot dir
@@ -326,6 +317,6 @@ setup() {
   run test -f /root/.env
   [ $status = 1 ]
 
-  run test -f /root/profiles/rendered/env.rendered
+  run test -f /root/rendered/env.rendered
   [ $status = 1 ]
 }

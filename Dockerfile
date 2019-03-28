@@ -3,10 +3,10 @@ FROM ubuntu
 RUN apt-get update
 RUN apt-get install -y bats
 
-RUN mkdir -p /root/profiles /root/another_test/profiles
+RUN mkdir -p /root/another_test
 
-COPY testdata/profiles/ /root/profiles/
-COPY testdata/profiles/ /root/another_test/profiles/
+COPY testdata/ /root/
+COPY testdata/ /root/another_test/
 COPY bashdot /usr/bin
 COPY test.bats /root
 
