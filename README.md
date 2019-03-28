@@ -7,9 +7,8 @@ I am **bashdot**, a minimalist dotfile management framework.
 I am a **single script**, written **entirely in bash**, which requires **no additional dependencies**.
 
 The authors of bashdot focus on transparency in the code, providing
-clear log output (you should know what is run on your system) and
-heavily [testing](https://circleci.com/gh/bashdot/bashdot/tree/master) the
-script using [bats](https://github.com/sstephenson/bats).
+clear log output and heavily [testing](https://circleci.com/gh/bashdot/bashdot/tree/master)
+the script using [bats](https://github.com/sstephenson/bats).
 
 ## Overview
 
