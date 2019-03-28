@@ -66,12 +66,11 @@ in a cloud drive.
 
 If you have values which need to be set in a file when bashdot is run, you can create a template.
 
-1. Append **.template** to any files which should be rendered.
+1. Append **.template** to any files which should be rendered.  Template files will have
+all variables replaced with the current environment variables when bashdot is run.
 
-1. Template files will have all variables replaced with the current environment variables when
-bashdot is run.
-
-1. The rendered files will have **.template** replaced with **.rendered** in the same directory.
+1. The rendered files names will have **.template** replaced with **.rendered** and be created
+in the same directory.
 
 1. For example:
 
@@ -94,6 +93,8 @@ bashdot is run.
     ```
 
 1. These files will then be symlinked into your home directory like any other bashdot managed file.
+
+1. Rendered files **will be removed** when you uninstall their respective bashdot profile.
 
 1. Be sure to include **\*\*/\*.rendered** in **.gitignore** if you will be checking your dotfiles
 into a Git repo.
