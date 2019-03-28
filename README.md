@@ -2,9 +2,11 @@
 
 # Summary
 
-I am **bashdot**, a minimalist dotfile management framework.
+I am **bashdot**, a minimalist dotfile management framework with support for 
+multiple profiles and templates.
 
-I am a **single script**, written **entirely in bash**, which requires **no additional dependencies**.
+I am a [single script](https://github.com/bashdot/bashdot/blob/master/bashdot), written
+**entirely in bash**, which requires **no additional dependencies**.
 
 The authors of bashdot focus on transparency in the code, providing
 clear log output and heavily [testing](https://circleci.com/gh/bashdot/bashdot/tree/master)
