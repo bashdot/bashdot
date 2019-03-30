@@ -167,6 +167,9 @@ setup() {
 
   run test -e /root/.README.md
   [ $status != 0 ]
+
+  run test -e /root/.CHANGELOG.txt
+  [ $status != 0 ]
 }
 
 @test "re-install" {

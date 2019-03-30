@@ -78,8 +78,9 @@ install() {
     profile=$1
     profile_dir=$current_working_dir/$profile
     
-    # Pipe seperated list of files that will not be symlinked by bashdot
-    ignored_files='CHANGELOG.md|Dockerfile|Makefile|LICENSE.md|LICENSE.txt|README.md|test.bats'
+    # Pipe seperated regex (parsed by egrep, case insensitive)
+    # that will not be symlinked by bashdot
+    ignored_files='^changelog|^contributing|^dockerfile|^icon|^license|^makefile|^readme'
 
     if [ ! -d $profile_dir ]; then
         log error "Profile '$profile' directory does not exist."
@@ -90,7 +91,7 @@ install() {
 
     log debug "Checking for exiting conflicting dotfiles."
     cd $profile_dir
-    for file in `ls |egrep -v $ignored_files`; do
+    for file in `ls |egrep -iv $ignored_files`; do
         dotfile=~/.$file
         source_file=$profile_dir/$file
         if [ -e $dotfile ]; then
@@ -126,7 +127,7 @@ install() {
     done
 
     log info "Installing dotfiles from '$profile_dir'."
-    for file in `ls |egrep -v $ignored_files`; do
+    for file in `ls |egrep -iv $ignored_files`; do
         source_file=$profile_dir/$file
 
         if [[ $source_file == *.template ]]; then
