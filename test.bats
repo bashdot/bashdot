@@ -76,6 +76,16 @@ setup() {
   [ $status = 1 ]
 }
 
+@test "error installing template without variables set" {
+  cd /root
+  unset APP_SECRET_KEY
+  run bashdot install rendered
+  [ $status = 1 ]
+
+  run test -e /root/.env
+  [ $status = 1 ]
+}
+
 @test "install" {
   cd /root
   run bashdot install default work
@@ -83,7 +93,7 @@ setup() {
   [ $status = 0 ]
 }
 
-@test "installing rendered file" {
+@test "installing rendered template file" {
   cd /root
   run env APP_SECRET_KEY=test1234 bashdot install rendered
   echo $output | grep "Completed installation of all profiles succesfully."
@@ -116,7 +126,6 @@ setup() {
   [ $status = 0 ]
 
   run bashdot profiles
-  echo "BOOM: $output"
   [ "${lines[0]}" == "/root default" ]
   [ "${lines[1]}" == "/root work" ]
   [ "${lines[2]}" == "/tmp another" ]

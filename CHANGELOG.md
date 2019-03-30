@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated ignore files
+- Error if varialbles are not set in rendered template
 
 ## [4.0.1] - 2019-03-28
 ### Changed

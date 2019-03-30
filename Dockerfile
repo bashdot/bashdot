@@ -1,7 +1,7 @@
 FROM ubuntu
 
-RUN apt-get update
-RUN apt-get install -y bats
+RUN apt-get update --fix-missing
+RUN apt-get install -y bats vim
 
 RUN mkdir -p /root/another_test
 

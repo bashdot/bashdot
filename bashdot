@@ -126,6 +126,24 @@ install() {
         fi
     done
 
+    # For each template, we will source it, and write the output to dev null. But send
+    # error to std out.  This wille ensure that all variables are set prior running or
+    # exit with an error on the unset variable.
+    for template in `ls |egrep '.*\.template$'`; do
+        source_file=$profile_dir/$template
+        log info "Ensuring all variables in template '$source_file' are set."
+
+        # Eval in current environment with 'set -u' to error on unset variables
+        # For some reason both 'set -u' below are required in my testing, I'm
+        # not sure why.
+        set -u
+        eval set -u "cat <<EOF
+$(<$source_file)
+EOF" > /dev/null
+    done
+    set +u
+    log info "All variables used in templates are set."
+
     log info "Installing dotfiles from '$profile_dir'."
     for file in `ls |egrep -iv $ignored_files`; do
         source_file=$profile_dir/$file
