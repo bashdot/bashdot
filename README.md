@@ -135,10 +135,9 @@ instances with that profile installed.
 
 **Q:** What if I have secrets or other private information to install in my dotfile?
 
-**A:** Never check in sensitive information in your dotfiles. To remove sensitive information,
-either a) pull that information from an external system b) encrypt it and read the decryption
-key from a location not in your dotfiles or c) leverage templates (described above). See
-[here](https://gist.github.com/bashdot/f3af28350f07176674a5474b2d891102) for examples.
+**A:** Never check in sensitive information in your dotfiles. To remove
+sensitive information, create a bashdot template and replace sensitive information
+with variables. This will require it to be provided at installation.
 
 **Q:** How can I share my bashdot profiles?
 
