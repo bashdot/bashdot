@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=4.1.0
+VERSION=4.1.1
 
 current_working_dir=`pwd`
 bashdot_config_file=$HOME/.bashdot
@@ -35,11 +35,20 @@ if [ "$action" != "dir" ] && [ "$action" != "install" ] &&
     exit 1
 fi
 
+exit_if_invalid_directory_name() {
+    dir=$1
+    echo $dir | grep "^[/.a-zA-Z0-9_-]*$" > /dev/null
+    if [ $? -ne 0 ]; then
+        log error "Current working directory '$dir' has an invalid character. The directory you are in when you install a profile must have alpha numberic characters, with only dashes, dots or underscores."
+        exit 1
+    fi
+}
+
 exit_if_invalid_profile_name() {
     profile=$1
     echo $profile | grep "^[a-zA-Z0-9_-]*$" > /dev/null
     if [ $? -ne 0 ]; then
-        log error "Invalid profile name '$profile'. Profiles must be alpha number with only dashes or underscores."
+        log error "Invalid profile name '$profile'. Profiles must be alpha numeric with only dashes or underscores."
         exit 1
     fi
 }
@@ -198,9 +207,9 @@ list_profiles() {
         for dir in $(cat $bashdot_config_file); do
             for link in $(list_links); do
                 expected_target_file_name=`basename $link | cut -c 2-`
-                readlink ~/$link | egrep "^$dir/.*/$expected_target_file_name$" > /dev/null
+                readlink ~/$link | egrep "^$dir/[.a-zA-Z0-9_-]*/$expected_target_file_name$" > /dev/null
                 if [ $? -eq 0 ]; then
-                    profile=`readlink ~/$link |sed -e "s/^.*\/\(.*\)\/.*$/\1/"`
+                    profile=`readlink ~/$link |sed -e "s/^.*\/[.a-zA-Z0-9_-]*\/\(.*\)\/.*$/\1/"`
                     echo "$dir $profile"
                 fi
             done
@@ -309,6 +318,7 @@ case $action in
                 break
             fi
 
+            exit_if_invalid_directory_name $current_working_dir
             exit_if_invalid_profile_name $1
             install $1
         done

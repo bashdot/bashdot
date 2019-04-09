@@ -18,13 +18,13 @@ setup() {
 
 @test "uninstall help" {
   run bashdot uninstall
-  [ "$output" == "Usage: bashdot uninstall DIRECTORY PROFILE" ]
+  [ "$output" == "Usage: bashdot uninstall PROFILE_DIRECTORY PROFILE" ]
   [ $status = 1 ]
 }
 
 @test "error invalid profile name" {
   run bashdot install test,test
-  echo $output | grep "Invalid profile name 'test,test'. Profiles must be alpha number with only dashes or underscores."
+  echo $output | grep "Invalid profile name 'test,test'. Profiles must be alpha numeric with only dashes or underscores."
   [ $status = 1 ]
 }
 
@@ -86,8 +86,29 @@ setup() {
   [ $status = 1 ]
 }
 
+@test "error installing from invalid current working directory" {
+  mkdir /tmp/invalid,name
+  cp -r /root/default /tmp/invalid,name
+  cd /tmp/invalid,name
+  run bashdot install default
+  [ $status = 1 ]
+
+  echo $output | grep "Current working directory '/tmp/invalid,name' has an invalid character. The directory you are in when you install a profile must have alpha numberic characters, with only dashes, dots or underscores."
+}
+
 @test "install" {
   cd /root
+  run bashdot install default work
+  echo $output | grep "Completed installation of all profiles succesfully."
+  [ $status = 0 ]
+}
+
+@test "install from directory with leading ." {
+  cd /root
+  mkdir .dotfiles
+  cp -r default .dotfiles
+  cp -r work .dotfiles
+  cd .dotfiles
   run bashdot install default work
   echo $output | grep "Completed installation of all profiles succesfully."
   [ $status = 0 ]
@@ -228,7 +249,7 @@ setup() {
 
 @test "version" {
   run bashdot version
-  [ "$output" == "4.1.0" ]
+  [ "$output" == "4.1.1" ]
   [ $status = 0 ]
 }
 
