@@ -137,14 +137,14 @@ instances with that profile installed.
 
 **A:** Never check in sensitive information in your dotfiles. To remove
 sensitive information, create a bashdot template and replace sensitive information
-with variables. This will require it to be provided at installation.
+with variables. This will the sensitive information to be provided during installation.
 
 **Q:** How can I share my bashdot profiles?
 
 **A:** Bashdot only manages dotfiles installation, not their distribution. To share your
 bashdot profile, make it available via source control or a file share.
 
-For example to install the public profiles from a Git repo:
+For example to install a profiles from a Git repo:
 
 ```sh
 git clone https://github.com/bashdot/bashdot_public_profile
