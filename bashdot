@@ -23,7 +23,7 @@ usage() {
             echo "Usage: bashdot install PROFILE1 PROFILE2 ... PROFILEN"
             ;;
         uninstall)
-            echo "Usage: bashdot uninstall DIRECTORY PROFILE"
+            echo "Usage: bashdot uninstall PROFILE_DIRECTORY PROFILE"
             ;;
     esac
 }
@@ -198,9 +198,9 @@ list_profiles() {
         for dir in $(cat $bashdot_config_file); do
             for link in $(list_links); do
                 expected_target_file_name=`basename $link | cut -c 2-`
-                readlink ~/$link | egrep "^$dir/[a-zA-Z0-9_-]*/$expected_target_file_name$" > /dev/null
+                readlink ~/$link | egrep "^$dir/.*/$expected_target_file_name$" > /dev/null
                 if [ $? -eq 0 ]; then
-                    profile=`readlink ~/$link |sed -e "s/^.*\/[a-zA-Z0-9_-]*\/\(.*\)\/.*$/\1/"`
+                    profile=`readlink ~/$link |sed -e "s/^.*\/\(.*\)\/.*$/\1/"`
                     echo "$dir $profile"
                 fi
             done
