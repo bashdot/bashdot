@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
 setup() {
-  /bin/rm -rf ~/.bashrc ~/.profile ~/.profilerc* ~/.bashdot another ~/.test ~/.env
+  /bin/rm -rf ~/.bashrc ~/.profile ~/.profilerc* ~/.bashdot another ~/.test ~/.env /root/rendered/env.rendered
 }
 
 @test "general help" {
@@ -94,6 +94,25 @@ setup() {
   [ $status = 1 ]
 
   echo $output | grep "Current working directory '/tmp/invalid,name' has an invalid character. The directory you are in when you install a profile must have alpha numberic characters, with only dashes, dots or underscores."
+}
+
+@test "error if profiles directories files contain invalid characters" {
+  cd /tmp
+  mkdir -p profile_with_invalid1/invalid\ name
+  mkdir -p profile_with_invalid2/invalid\\name
+  mkdir -p profile_with_invalid3/invalid:name
+
+  run bashdot install profile_with_invalid1
+  echo $output |grep "Files in '/tmp/profile_with_invalid1' contain invalid characters."
+  [ $status = 1 ]
+
+  run bashdot install profile_with_invalid2
+  echo $output |grep "Files in '/tmp/profile_with_invalid2' contain invalid characters."
+  [ $status = 1 ]
+
+  run bashdot install profile_with_invalid3
+  echo $output |grep "Files in '/tmp/profile_with_invalid3' contain invalid characters."
+  [ $status = 1 ]
 }
 
 @test "install" {
@@ -209,12 +228,20 @@ setup() {
   [ $status = 0 ]
 }
 
-@test "profiles" {
+@test "list profiles" {
   cd /root
   bashdot install default work
   run bashdot profiles
   [ "${lines[0]}" == "/root default" ]
   [ "${lines[1]}" == "/root work" ]
+  [ $status = 0 ]
+}
+
+@test "list profiles with only rendered template in home directory" {
+  cd /root
+  run env APP_SECRET_KEY=test1234 bashdot install rendered
+  run bashdot profiles
+  [ "${lines[0]}" == "/root rendered" ]
   [ $status = 0 ]
 }
 
@@ -343,8 +370,21 @@ setup() {
 }
 
 @test "uninstall rendered file" {
+  run test -f /root/.env
+  [ $status = 1 ]
+
+  run test -f /root/rendered/env.rendered
+  [ $status = 1 ]
+
   cd /root
   env APP_SECRET_KEY=test1234 bashdot install rendered
+
+  run test -f /root/.env
+  [ $status = 0 ]
+
+  run test -f /root/rendered/env.rendered
+  [ $status = 0 ]
+
   bashdot uninstall /root rendered
 
   run test -f /root/.env

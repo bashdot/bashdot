@@ -35,6 +35,15 @@ if [ "$action" != "dir" ] && [ "$action" != "install" ] &&
     exit 1
 fi
 
+exit_if_profile_directories_contain_invalid_characters() {
+    profile_dir=$1
+    ls $profile_dir | egrep '[[:space:]:,/\]'
+    if [ $? -eq 0 ]; then
+        log error "Files in '$profile_dir' contain invalid characters."
+        exit 1
+    fi
+}
+
 exit_if_invalid_directory_name() {
     dir=$1
     echo $dir | grep "^[/.a-zA-Z0-9_-]*$" > /dev/null
@@ -86,6 +95,8 @@ link_dotfile() {
 install() {
     profile=$1
     profile_dir=$current_working_dir/$profile
+
+    exit_if_profile_directories_contain_invalid_characters $profile_dir
     
     # Pipe seperated regex (parsed by egrep, case insensitive)
     # that will not be symlinked by bashdot
@@ -191,7 +202,7 @@ list_links() {
             # Only include if it points to the dotfiles directory
             for bashdot_dir in $(cat $bashdot_config_file); do
                 expected_target_file_name=`basename $file | cut -c 2-`
-                readlink ~/$file |egrep "^$bashdot_dir/[a-zA-Z0-9_-]*/$expected_target_file_name$" > /dev/null
+                readlink ~/$file |egrep "^$bashdot_dir/[a-zA-Z0-9_-]*/$expected_target_file_name(\.rendered)?$" > /dev/null
                 if [ $? -eq 0 ];then
                     echo $file
                 fi
@@ -207,7 +218,7 @@ list_profiles() {
         for dir in $(cat $bashdot_config_file); do
             for link in $(list_links); do
                 expected_target_file_name=`basename $link | cut -c 2-`
-                readlink ~/$link | egrep "^$dir/[.a-zA-Z0-9_-]*/$expected_target_file_name$" > /dev/null
+                readlink ~/$link | egrep "^$dir/[.a-zA-Z0-9_-]*/$expected_target_file_name(\.rendered)?$" > /dev/null
                 if [ $? -eq 0 ]; then
                     profile=`readlink ~/$link |sed -e "s/^.*\/[.a-zA-Z0-9_-]*\/\(.*\)\/.*$/\1/"`
                     echo "$dir $profile"
@@ -258,7 +269,7 @@ uninstall() {
 
         # Check if link target is part of this bashdot profile
         expected_target_file_name=`basename $link | cut -c 2-`
-        echo $target |egrep "^$dir/$profile/${expected_target_file_name}$" > /dev/null
+        echo $target |egrep "^$dir/$profile/${expected_target_file_name}(\.rendered)?$" > /dev/null
         if [ $? -eq 0 ]; then
             # If a link target was rendered from a template, remove
             # the rendered file on uninstall
@@ -280,7 +291,7 @@ uninstall() {
     for link in $(list_links); do
         log debug "Evaluating if '$link' is part of a bashdot profile in dir '$dir'."
         expected_target_file_name=`basename $link | cut -c 2-`
-        echo `readlink ~/$link` |egrep "^$dir/[a-zA-Z0-9_-]*/${expected_target_file_name}$" > /dev/null
+        echo `readlink ~/$link` |egrep "^$dir/[a-zA-Z0-9_-]*/${expected_target_file_name}(\.rendered)?$" > /dev/null
         if [ $? -eq 0 ]; then
             log debug "'$link' is part of a bashdot profile in '$dir', not removing '$dir' from '$bashdot_config_file'."
             dir_empty=false
@@ -311,6 +322,8 @@ case $action in
             exit 1
         fi
 
+        exit_if_invalid_directory_name $current_working_dir
+
         while true; do
             shift
 
@@ -318,7 +331,6 @@ case $action in
                 break
             fi
 
-            exit_if_invalid_directory_name $current_working_dir
             exit_if_invalid_profile_name $1
             install $1
         done
