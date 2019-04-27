@@ -55,7 +55,7 @@ sudo chmod a+x /usr/local/bin/bashdot
     echo 'set -o vi' > default/env
     ```
 
-    Note, bashdot **prepends a dot, in front of the filename, to the linked file**.
+    Note, bashdot **prepends a dot**, in front of the filename, to the linked file.
     
     The above file **env** will be linked to **~/.env**.
 
@@ -124,8 +124,9 @@ For example, if you run:
 bashdot install default work
 ```
 
-Bashdot will symlink all the files in default and work into your home directory. Profiles
-installed on the same system must not contain any overlapping files.
+Bashdot will symlink all the files in default and work into your home directory.
+
+Profiles installed on the same system must not contain overlapping files.
 
 ## Frequently Asked Questions
 
