@@ -14,69 +14,84 @@ the script using [bats](https://github.com/sstephenson/bats).
 
 ## Overview
 
-Bashdot works by symlinking all files and directions in a given profile
-directory, within the current directory where bashdot is run, to files
-in the users home.
+Bashdot works by symlinking files and directions, in a given profile, into the
+users home directory.
 
-One or more profiles can be installed on a specific computer to provide
+One or more profiles can be installed on a specific instance to provide
 the desired dotfiles for it's purpose (work, home, etc.), operating
 system (Linux, MacOS, Solaris, etc.) and version (Debian, RedHat, etc.).
 
-Using a combinations of profiles, you can remove conditional logic from your bash
-scripts. For example, create a Linux profile for Linux specific commands or
-aliases, or an operations profile for those specific to the operations
-organization. Only install what you need on a given system.
-
 Bashdot supports templates for replacing values in files during installation.
+
+## Install
+
+MacOS Homebrew
+
+```sh
+brew tap bashdot/tap
+brew install bashdot
+```
+
+Manual Installation
+
+```sh
+curl -s https://raw.githubusercontent.com/bashdot/bashdot/master/bashdot > bashdot
+sudo mv bashdot /usr/local/bin
+sudo chmod a+x /usr/local/bin/bashdot
+```
 
 ## Quick Start
 
-1. Install Bashdot
-
-    MacOS Homebrew
+1. Create your initial profile directory, in this exmaple, default.
 
     ```sh
-    brew tap bashdot/tap
-    brew install bashdot
+    mkdir default
     ```
 
-    Manual Installation
+1. Add any files you would like symlinked into your home directory. For example:
+
 
     ```sh
-    curl -s https://raw.githubusercontent.com/bashdot/bashdot/master/bashdot > bashdot
-    sudo mv bashdot /usr/local/bin
-    sudo chmod a+x /usr/local/bin/bashdot
+    echo 'set -o vi' > default/env
     ```
 
-1. Clone the **bashdot_profiles** starter repo
+    Note, **bashdot pre-pends a dot, in front of the filename, to the linked file**. In the above example, **env** will be linked to **~/.env**.
+
+
+1. Install the profile.
 
     ```sh
-    git clone https://github.com/bashdot/bashdot_profiles
+    bashdot install default
     ```
 
-1. Change into the bashdot_profiles directory and run the below command to setup the
-**default** and **home** profiles on this instance.
+    The file **env** is now linked to **~/.env**.
 
-    ```sh
-    cd bashdot_profiles
-    bashdot install default home
-    ```
+1. Continue adding your dotfiles to the default profile.
 
-1. Update the directory with your dotfiles, check it into source or store it in a cloud drive.
+
+   ```sh
+   mv ~/.bashrc default/bashrc
+   ```
+
+1. You can safely re-run ```bashdot install default``` to link newly added files.
+
+1. Thats it, store this directory in a cloud drive or check it into source.
 
 ## Templates
 
 If you have values which need to be set in a file when bashdot is run, you can create a template.
 
-1. Append **.template** to any files which should be rendered.  Template files will have
-all variables replaced with the current environment variables when bashdot is run.
+1. Append **.template** to any files which should be rendered.
 
-1. The rendered files names will have **.template** replaced with **.rendered** and be created
-in the same directory.
+1. When installed, template files will have all variables replaced with the current
+environment variables set when bashdot is run.
+
+1. The rendered files will be created in the same directory, and have **.template** replaced
+with **.rendered**.
 
 1. For example:
 
-    If you have the file **profiles/home/env.template** with the below contents:
+    If you have the file **default/env.template** with the below contents:
 
     ```sh
     export SECRET_KEY=$ENV_SECRET_KEY
@@ -85,16 +100,14 @@ in the same directory.
     You can run the following to set the value **ENV_SECRET_KEY** when installing the home profile:
 
     ```sh
-    env ENV_SECRET_KEY=test1234 bashdot install home
+    env ENV_SECRET_KEY=test1234 bashdot install default
     ```
 
-    This will result in the following rendered file as **profiles/home/env.rendered** and symlinkd to **~/.env**
+    This will result in the rendered file **default/env.rendered** being created and symlinkd to **~/.env** with the below contents..
 
     ```sh
     env SECRET_KEY=test1234
     ```
-
-1. These files will then be symlinked into your home directory like any other bashdot managed file.
 
 1. Rendered files **will be removed** when you uninstall their respective bashdot profile.
 
@@ -111,25 +124,8 @@ For example, if you run:
 bashdot install default work
 ```
 
-Bashdot will symlink all the files in the default and work into your home directory
-while prepending a period (prepending a period prevents all files from being hidden in
-the source directory).
-
-When run in the [starter repo](https://github.com/bashdot/bashdot_profiles), the above command
-would create the following symlinks:
-
-```sh
-lrwxrwxrwx 1 brett brett   28 Mar  8 09:03 .bashrc -> /brett/bashdot/profiles/default/bashrc
-lrwxrwxrwx 1 brett brett   40 Mar  8 09:03 .profilerc_work -> /brett/bashdot/profiles/work/profilerc_work
-```
-
-You can then make changes to files in the **default** or **work** profiles, or
-add additional profiles as necessary. Re-run bashdot install to link any newly
-created files or directories.
-
-Since the files are symlinked into your home directory, if you keep the bashdot directory
-on a shared drive, changes to files on one instance will automatically be reflected on all
-instances with that profile installed.
+Bashdot will symlink all the files in default and work into your home directory. Profiles
+installed on the same system must not contain any overlapping files.
 
 ## Frequently Asked Questions
 
@@ -142,14 +138,7 @@ with variables. This will the sensitive information to be provided during instal
 **Q:** How can I share my bashdot profiles?
 
 **A:** Bashdot only manages dotfiles installation, not their distribution. To share your
-bashdot profile, make it available via source control or a file share.
-
-For example to install a profiles from a Git repo:
-
-```sh
-git clone https://github.com/bashdot/bashdot_public_profile
-bashdot install bashdot_public_profile
-```
+bashdot profile, make it available via source control, shared file system or cloud drive.
 
 **Q:** Does bashdot work with zsh, fish or other shells?
 

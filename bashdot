@@ -97,7 +97,7 @@ install() {
     profile_dir=$current_working_dir/$profile
 
     exit_if_profile_directories_contain_invalid_characters $profile_dir
-    
+
     # Pipe seperated regex (parsed by egrep, case insensitive)
     # that will not be symlinked by bashdot
     ignored_files='^changelog|^contributing|^dockerfile|^icon|^license|^makefile|^readme'
