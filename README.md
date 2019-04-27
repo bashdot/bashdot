@@ -66,9 +66,7 @@ sudo chmod a+x /usr/local/bin/bashdot
     bashdot install default
     ```
 
-    The file **env** is now linked to **~/.env**.
-
-1. Continue adding your dotfiles to the default profile.
+1. Continue adding your dotfiles.
 
 
    ```sh
@@ -77,7 +75,7 @@ sudo chmod a+x /usr/local/bin/bashdot
 
 1. You can safely re-run ```bashdot install default``` to link newly added files.
 
-1. Thats it, store this directory in a cloud drive or check it into source.
+1. Thats it, store this directory in a cloud drive or check it into source. Repeat for additional profiles.
 
 ## Templates
 
