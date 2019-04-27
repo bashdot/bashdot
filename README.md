@@ -56,8 +56,6 @@ sudo chmod a+x /usr/local/bin/bashdot
     ```
 
     Note, bashdot **prepends a dot**, in front of the filename, to the linked file.
-    
-    The above file **env** will be linked to **~/.env**.
 
 
 1. Install the profile.
@@ -65,6 +63,8 @@ sudo chmod a+x /usr/local/bin/bashdot
     ```sh
     bashdot install default
     ```
+
+    The above file **default/env** will now be linked to **~/.env**.
 
 1. Continue adding your dotfiles.
 
