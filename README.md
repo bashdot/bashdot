@@ -42,7 +42,7 @@ sudo chmod a+x /usr/local/bin/bashdot
 
 ## Quick Start
 
-1. Create your initial profile directory, in this exmaple, default.
+1. Create your initial profile directory, in this example, default.
 
     ```sh
     mkdir default
@@ -55,7 +55,9 @@ sudo chmod a+x /usr/local/bin/bashdot
     echo 'set -o vi' > default/env
     ```
 
-    Note, **bashdot pre-pends a dot, in front of the filename, to the linked file**. In the above example, **env** will be linked to **~/.env**.
+    Note, bashdot **prepends a dot, in front of the filename, to the linked file**.
+    
+    The above file **env** will be linked to **~/.env**.
 
 
 1. Install the profile.
