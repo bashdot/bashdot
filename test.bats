@@ -276,7 +276,7 @@ setup() {
 
 @test "version" {
   run bashdot version
-  [ "$output" == "4.1.2" ]
+  [ "$output" == "4.1.3" ]
   [ $status = 0 ]
 }
 
