@@ -106,7 +106,7 @@ with **.rendered**.
     This will result in the rendered file **default/env.rendered** being created and symlinkd to **~/.env** with the below contents..
 
     ```sh
-    env SECRET_KEY=test1234
+    export SECRET_KEY=test1234
     ```
 
 1. Rendered files **will be removed** when you uninstall their respective bashdot profile.
