@@ -130,11 +130,20 @@ Profiles installed on the same system must not contain overlapping files.
 
 ## Frequently Asked Questions
 
-**Q:** What if I have secrets or other private information to install in my dotfile?
+**Q:** How do I set secrets or private information in my dotfiles?
 
-**A:** Never check in sensitive information in your dotfiles. To remove
-sensitive information, create a bashdot template and replace sensitive information
-with variables. This will the sensitive information to be provided during installation.
+**A:** Never store sensitive information in your dotfiles. To remove sensitive
+information, create a bashdot [template](https://github.com/bashdot/bashdot#templates) and
+replace sensitive information with variables. This will prompt for the sensitive information to be
+provided when you run bashdot install.
+
+**Q:** How do I manage directories with bashdot, when only some of the contents, of that
+directory, should be in source control? For example **.config** or **.ssh**?
+
+**A:** Bashdot does not provide any functionality past symlinking into the top level of
+home directory. To manage the contents of any directories symlinked by bashdot, we recommend
+you add the directory and then ignore the appropriate files from your source
+control (For example with [**.gitignore**](https://git-scm.com/docs/gitignore)).
 
 **Q:** How can I share my bashdot profiles?
 
