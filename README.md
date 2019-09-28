@@ -42,40 +42,31 @@ sudo chmod a+x /usr/local/bin/bashdot
 
 ## Quick Start
 
-1. Create your initial profile directory, in this example, default.
+1. Create your initial profile directory, in this example, default. Add any files you would
+like symlinked into your home directory when this profile is installed:
 
     ```sh
     mkdir default
-    ```
-
-1. Add any files you would like symlinked into your home directory. For example:
-
-
-    ```sh
     echo 'set -o vi' > default/env
     ```
-
-    Note, bashdot **prepends a dot**, in front of the filename, to the linked file.
-
 
 1. Install the profile.
 
     ```sh
     bashdot install default
     ```
+    Note, when you run install, bashdot **prepends a dot**, in front of the filename, to the linked file.
 
-    The above file **default/env** will now be linked to **~/.env**.
+    In the above, **default/env** will now be linked to **~/.env**.
 
-1. Continue adding your dotfiles.
-
+1. Continue adding your dotfiles to the default profile.
 
    ```sh
    mv ~/.bashrc default/bashrc
    ```
 
-1. You can safely re-run ```bashdot install default``` to link newly added files.
-
-1. Thats it, store this directory in a cloud drive or check it into source. Repeat for additional profiles.
+1. You can safely re-run ```bashdot install default``` to link newly added files. Store this directory in
+a cloud drive or source control. Repeat for additional profiles.
 
 ## Templates
 
@@ -132,8 +123,8 @@ Profiles installed on the same system must not contain overlapping files.
 
 **Q:** How do I set secrets or private information in my dotfiles?
 
-**A:** Never store sensitive information in your dotfiles. To remove sensitive
-information, create a bashdot [template](https://github.com/bashdot/bashdot#templates) and
+**A:** Never store secrets in your dotfiles. To remove sensitive information, create
+a bashdot [template](https://github.com/bashdot/bashdot#templates) and
 replace sensitive information with variables. This will prompt for the sensitive information to be
 provided when you run bashdot install.
 
