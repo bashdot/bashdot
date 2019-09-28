@@ -42,11 +42,15 @@ sudo chmod a+x /usr/local/bin/bashdot
 
 ## Quick Start
 
-1. Create your initial profile directory, in this example, default. Add any files you would
-like symlinked into your home directory when this profile is installed:
+1. Create your initial profile directory, in this example, **default**.
 
     ```sh
     mkdir default
+    ```
+
+1. Add any files you would like symlinked into your home directory when this profile is installed:
+
+    ```sh
     echo 'set -o vi' > default/env
     ```
 
