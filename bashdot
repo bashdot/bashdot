@@ -2,7 +2,7 @@
 
 VERSION=4.1.3
 
-current_working_dir=`pwd`
+current_working_dir=$(pwd)
 bashdot_config_file=$HOME/.bashdot
 
 LOGGER_FMT=${LOGGER_FMT:="%Y-%m-%d"}
@@ -79,7 +79,7 @@ link_dotfile() {
     dotfile=$1
     source_file=$2
 
-    existing=`readlink "$dotfile"`
+    existing=$(readlink "$dotfile")
     log debug "Evaluating if '$dotfile' which links to '$existing' matches desired target '$source_file'."
 
     if [ "$existing" == "$source_file" ]; then
@@ -110,12 +110,12 @@ install() {
     log info "Adding dotfiles profile '$profile'."
 
     log debug "Checking for exiting conflicting dotfiles."
-    cd "$profile_dir"
-    for file in `ls |egrep -iv "$ignored_files"`; do
+    cd "$profile_dir" || exit
+    for file in $(ls |egrep -iv "$ignored_files"); do
         dotfile=~/."$file"
         source_file="$profile_dir/$file"
         if [ -e "$dotfile" ]; then
-            existing=`readlink "$dotfile"`
+            existing=$(readlink "$dotfile")
 
             # Skip files which already link to the same location
             if [ "$existing" == "$source_file" ]; then
@@ -140,7 +140,7 @@ install() {
         echo "$current_working_dir" > "$bashdot_config_file"
     fi
 
-    for skipped_file in `ls -ad .*`; do
+    for skipped_file in $(ls -ad .*); do
         if [ "$skipped_file" != ".." ] && [ "$skipped_file" != "." ]; then
             log warn "Skipping file with dot prepended '$skipped_file'. Remove dot if file should be linked."
         fi
@@ -149,7 +149,7 @@ install() {
     # For each template, we will source it, and write the output to dev null. But send
     # error to std out.  This wille ensure that all variables are set prior running or
     # exit with an error on the unset variable.
-    for template in `ls |egrep '.*\.template$'`; do
+    for template in $(ls |egrep '.*\.template$'); do
         source_file="$profile_dir/$template"
         log info "Ensuring all variables in template '$source_file' are set."
 
@@ -165,21 +165,21 @@ EOF" > /dev/null
     log info "All variables used in templates are set."
 
     log info "Installing dotfiles from '$profile_dir'."
-    for file in `ls |egrep -iv "$ignored_files"`; do
+    for file in $(ls |egrep -iv "$ignored_files"); do
         source_file="$profile_dir/$file"
 
         if [[ "$source_file" == *.template ]]; then
-            rendered_file_name=`echo "$file" | sed -e 's/^\(.*\)\.template/\1.rendered/'`
+            rendered_file_name=$(echo "$file" | sed -e 's/^\(.*\)\.template/\1.rendered/')
             rendered_file_path="$profile_dir/$rendered_file_name"
 
             log info "'$source_file' is a template, rendering to '$rendered_file_path'."
-            dotfile_name=`echo "$file" | sed -e 's/^\(.*\)\.template/\1/'`
+            dotfile_name=$(echo "$file" | sed -e 's/^\(.*\)\.template/\1/')
             dotfile=~/."$dotfile_name"
 
             # Eval in current environment to replace variables with current environment
             eval "cat <<EOF
 $(<"$source_file")
-EOF" > $rendered_file_path 2> /dev/null
+EOF" > "$rendered_file_path" 2> /dev/null
 
             # Linking dotfile to rendered file path
             link_dotfile "$dotfile" "$rendered_file_path"
@@ -201,10 +201,10 @@ list_links() {
 
             # Only include if it points to the dotfiles directory
             for bashdot_dir in $(cat "$bashdot_config_file"); do
-                expected_target_file_name=`basename "$file" | cut -c 2-`
+                expected_target_file_name=$(basename "$file" | cut -c 2-)
                 readlink ~/"$file" |egrep "^$bashdot_dir/[a-zA-Z0-9_-]*/$expected_target_file_name(\.rendered)?$" > /dev/null
                 if [ $? -eq 0 ];then
-                    echo $file
+                    echo "$file"
                 fi
             done
         fi
@@ -217,10 +217,10 @@ list_profiles() {
     else
         for dir in $(cat "$bashdot_config_file"); do
             for link in $(list_links); do
-                expected_target_file_name=`basename "$link" | cut -c 2-`
+                expected_target_file_name=$(basename "$link" | cut -c 2-)
                 readlink ~/"$link" | egrep "^$dir/[.a-zA-Z0-9_-]*/$expected_target_file_name(\.rendered)?$" > /dev/null
                 if [ $? -eq 0 ]; then
-                    profile=`readlink ~/"$link" |sed -e "s/^.*\/[.a-zA-Z0-9_-]*\/\(.*\)\/.*$/\1/"`
+                    profile=$(readlink ~/"$link" |sed -e "s/^.*\/[.a-zA-Z0-9_-]*\/\(.*\)\/.*$/\1/")
                     echo "$dir $profile"
                 fi
             done
@@ -230,7 +230,7 @@ list_profiles() {
 
 show_links() {
     for link in $(list_links); do
-        dest=`readlink ~/"$link"`
+        dest=$(readlink ~/"$link")
         chomped_link="${link%\\n}"
         echo "~/$chomped_link -> $dest"
     done
@@ -265,10 +265,10 @@ uninstall() {
     # and point to a file in this profile in the target dir
     for link in $(list_links);do
         log debug "Evaluating '$link' for removal."
-        target=`readlink ~/"$link"`
+        target=$(readlink ~/"$link")
 
         # Check if link target is part of this bashdot profile
-        expected_target_file_name=`basename "$link" | cut -c 2-`
+        expected_target_file_name=$(basename "$link" | cut -c 2-)
         echo "$target" |egrep "^$dir/$profile/${expected_target_file_name}(\.rendered)?$" > /dev/null
         if [ $? -eq 0 ]; then
             # If a link target was rendered from a template, remove
@@ -290,8 +290,8 @@ uninstall() {
     dir_empty=true
     for link in $(list_links); do
         log debug "Evaluating if '$link' is part of a bashdot profile in dir '$dir'."
-        expected_target_file_name=`basename "$link" | cut -c 2-`
-        echo `readlink ~/"$link"` |egrep "^$dir/[a-zA-Z0-9_-]*/${expected_target_file_name}(\.rendered)?$" > /dev/null
+        expected_target_file_name=$(basename "$link" | cut -c 2-)
+        echo $(readlink ~/"$link") |egrep "^$dir/[a-zA-Z0-9_-]*/${expected_target_file_name}(\.rendered)?$" > /dev/null
         if [ $? -eq 0 ]; then
             log debug "'$link' is part of a bashdot profile in '$dir', not removing '$dir' from '$bashdot_config_file'."
             dir_empty=false
