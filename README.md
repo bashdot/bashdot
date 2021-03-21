@@ -7,13 +7,11 @@
 **bashdot** is a [single script](https://github.com/bashdot/bashdot/blob/master/bashdot), written
 **entirely in bash**, which requires **no dependencies**.
 
-The authors of bashdot focus on transparency in the code, providing
-clear log output and comprehensive [testing](https://circleci.com/gh/bashdot/bashdot/tree/master)
-(via [bats](https://github.com/sstephenson/bats)).
+**bashdot** focuses on simplicity, brevity, logging and comprehensive [testing](https://circleci.com/gh/bashdot/bashdot/tree/master) (via [bats](https://github.com/sstephenson/bats)).
 
 ## Overview
 
-Bashdot symlinks files and directions into the users home directory.
+Bashdot symlinks files and directions into the users home directory from a directory known as a **profile**.
 
 One or more profiles can be installed on a specific instance to provide
 the unique dotfiles based on use (work, home, etc.), operating system
