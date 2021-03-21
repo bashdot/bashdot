@@ -2,26 +2,24 @@
 
 # Summary
 
-I am **bashdot**, a minimalist dotfile management framework with support for 
-multiple profiles and templates.
+**bashdot** is a minimalist dotfile management framework supporting multiple profiles and templates.
 
-I am a [single script](https://github.com/bashdot/bashdot/blob/master/bashdot), written
-**entirely in bash**, which requires **no additional dependencies**.
+**bashdot** is a [single script](https://github.com/bashdot/bashdot/blob/master/bashdot), written
+**entirely in bash**, which requires **no dependencies**.
 
 The authors of bashdot focus on transparency in the code, providing
-clear log output and heavily [testing](https://circleci.com/gh/bashdot/bashdot/tree/master)
-the script using [bats](https://github.com/sstephenson/bats).
+clear log output and comprehensive [testing](https://circleci.com/gh/bashdot/bashdot/tree/master)
+(via [bats](https://github.com/sstephenson/bats)).
 
 ## Overview
 
-Bashdot works by symlinking files and directions, in a given profile, into the
-users home directory.
+Bashdot symlinks files and directions into the users home directory.
 
 One or more profiles can be installed on a specific instance to provide
-the desired dotfiles for it's purpose (work, home, etc.), operating
-system (Linux, MacOS, Solaris, etc.) and version (Debian, RedHat, etc.).
+the unique dotfiles based on use (work, home, etc.), operating system
+(Linux, MacOS, etc.) or version (Debian, RedHat, etc.).
 
-Bashdot supports templates for replacing values in files during installation.
+Bashdot support templates for replacing values in files during installation.
 
 ## Install
 
@@ -74,7 +72,7 @@ a cloud drive or source control. Repeat for additional profiles.
 
 ## Templates
 
-If you have values which need to be set in a file when bashdot is run, you can create a template.
+Values which need to be set in a file when bashdot is run can be placed in a template.
 
 1. Append **.template** to any files which should be rendered.
 
