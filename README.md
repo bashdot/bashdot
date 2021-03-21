@@ -6,8 +6,7 @@
 as a [single script](https://github.com/bashdot/bashdot/blob/master/bashdot), written **entirely in bash**,
 requiring **no dependencies**.
 
-It is designeed with simplicity, brevity, logging and comprehensive
-[test](https://circleci.com/gh/bashdot/bashdot/tree/master) coverage (via [bats](https://github.com/sstephenson/bats)).
+It is designeed to be simple and concise with comprehensive [test](https://circleci.com/gh/bashdot/bashdot/tree/master) coverage (via [bats](https://github.com/sstephenson/bats)).
 
 ## Overview
 
