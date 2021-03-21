@@ -4,9 +4,9 @@
 
 **bashdot** is a minimalist dotfile management framework, supporting multiple profiles and templates. It is
 as a [single script](https://github.com/bashdot/bashdot/blob/master/bashdot), written **entirely in bash**,
-requiring**no dependencies**.
+requiring **no dependencies**.
 
-It is designeed with simplicity, brevity, rich logging and comprehensive
+It is designeed with simplicity, brevity, logging and comprehensive
 [test](https://circleci.com/gh/bashdot/bashdot/tree/master) coverage (via [bats](https://github.com/sstephenson/bats)).
 
 ## Overview
