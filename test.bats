@@ -275,7 +275,7 @@ setup() {
 }
 
 @test "version" {
-  version=$(grep ^VERSION /usr/bin/bashdot |cut -d\- -f2)
+  version=$(grep ^VERSION /usr/bin/bashdot |cut -d\= -f2)
   run bashdot version
   [ "$output" == "$version" ]
   [ $status = 0 ]
