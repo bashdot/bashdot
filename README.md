@@ -2,7 +2,7 @@
 
 # Summary
 
-**bashdot** is a minimalist dotfile management framework, supporting multiple profiles and templates. It is
+**bashdot** is a minimalist dotfile management framework that supports multiple profiles and template. It is
 as a [single script](https://github.com/bashdot/bashdot/blob/master/bashdot), written **entirely in bash**,
 requiring **no dependencies**.
 
@@ -16,7 +16,7 @@ One or more profiles can be installed on a specific instance to provide
 the unique dotfiles based on use (work, home, etc.), operating system
 (Linux, MacOS, etc.) or version (Debian, RedHat, etc.).
 
-Bashdot support templates for replacing values in files during installation.
+Bashdot supports templates for replacing values in files during installation.
 
 ## Install
 
