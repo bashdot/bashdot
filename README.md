@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/bashdot/bashdot/tree/master.svg?style=svg)](https://circleci.com/gh/bashdot/bashdot/tree/master)
+[![CircleCI](https://circleci.com/gh/bashdot/bashdot/tree/master.svg?style=svg)](https://circleci.com/gh/bashdot/bashdot/tree/master) [![Gitter](https://badges.gitter.im/bashdot/community.svg)](https://gitter.im/bashdot/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Summary
 
