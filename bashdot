@@ -46,7 +46,7 @@ exit_if_profile_directories_contain_invalid_characters() {
 exit_if_invalid_directory_name() {
     dir=$1
     if ! echo "$dir" | grep "^[/.a-zA-Z0-9_-]*$" > /dev/null; then
-        log error "Current working directory '$dir' has an invalid character. The directory you are in when you install a profile must have alpha numberic characters, with only dashes, dots or underscores."
+        log error "Current working directory '$dir' has an invalid character. The directory you are in when you install a profile must have alpha numeric characters, with only dashes, dots or underscores."
         exit 1
     fi
 }
@@ -95,7 +95,7 @@ install() {
 
     exit_if_profile_directories_contain_invalid_characters "$profile_dir"
 
-    # Pipe seperated regex (parsed by egrep, case insensitive)
+    # Pipe separated regex (parsed by egrep, case insensitive)
     # that will not be symlinked by bashdot
     ignored_files='^changelog|^contributing|^dockerfile|^icon|^license|^makefile|^readme'
 
@@ -142,7 +142,7 @@ install() {
     done
 
     # For each template, we will source it, and write the output to dev null. But send
-    # error to std out.  This wille ensure that all variables are set prior running or
+    # error to std out.  This will ensure that all variables are set prior running or
     # exit with an error on the unset variable.
     for template in $(ls |grep -E '.*\.template$'); do
         source_file="$profile_dir/$template"
@@ -324,7 +324,7 @@ case "$action" in
             install "$1"
         done
 
-        log info "Completed installation of all profiles succesfully."
+        log info "Completed installation of all profiles successfully."
         ;;
     links)
         show_links
@@ -338,7 +338,7 @@ case "$action" in
             exit 1
         fi
         uninstall "$2" "$3"
-        log info "Completed uninstallation succesfully."
+        log info "Completed uninstallation successfully."
         ;;
     version)
         echo "$VERSION"
