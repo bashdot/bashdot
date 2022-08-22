@@ -1,6 +1,8 @@
 FROM ubuntu
 
 RUN rm -rf /var/lib/apt/lists/*
+RUN apt clean
+RUN apt autoclean
 RUN apt-get update --fix-missing
 RUN apt-get install -y bats vim
 
