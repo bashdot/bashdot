@@ -93,7 +93,7 @@ setup() {
   run bashdot install default
   [ $status = 1 ]
 
-  echo $output | grep "Current working directory '/tmp/invalid,name' has an invalid character. The directory you are in when you install a profile must have alpha numberic characters, with only dashes, dots or underscores."
+  echo $output | grep "Current working directory '/tmp/invalid,name' has an invalid character. The directory you are in when you install a profile must have alpha numeric characters, with only dashes, dots or underscores."
 }
 
 @test "error if profiles directories files contain invalid characters" {
@@ -118,7 +118,7 @@ setup() {
 @test "install" {
   cd /root
   run bashdot install default work
-  echo $output | grep "Completed installation of all profiles succesfully."
+  echo $output | grep "Completed installation of all profiles successfully."
   [ $status = 0 ]
 }
 
@@ -129,14 +129,14 @@ setup() {
   cp -r work .dotfiles
   cd .dotfiles
   run bashdot install default work
-  echo $output | grep "Completed installation of all profiles succesfully."
+  echo $output | grep "Completed installation of all profiles successfully."
   [ $status = 0 ]
 }
 
 @test "installing rendered template file" {
   cd /root
   run env APP_SECRET_KEY=test1234 bashdot install rendered
-  echo $output | grep "Completed installation of all profiles succesfully."
+  echo $output | grep "Completed installation of all profiles successfully."
   cat /root/.env | grep 'export APP_SECRET_KEY=test1234'
 
   run sum /root/.env
