@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
 setup() {
-  /bin/rm -rf ~/.bashrc ~/.profile ~/.profilerc* ~/.bashdot another ~/.test ~/.env /root/rendered/env.rendered
+  /bin/rm -rf ~/.bashrc ~/.profile ~/.profilerc* ~/.bashdot another ~/.test ~/.env /home/circleci/rendered/env.rendered
 }
 
 @test "general help" {
@@ -35,22 +35,22 @@ setup() {
 }
 
 @test "error uninstall when no bashdot profiles installed" {
-  run bashdot uninstall /root test
+  run bashdot uninstall /home/circleci test
   echo $output | grep "Config file '$HOME/.bashdot' not found."
   echo $output | grep "No dotfiles installed by bashdot."
   [ $status = 1 ]
 }
 
 @test "error uninstall profiles does not exist" {
-  cd /root
+  cd /home/circleci
   bashdot install default
-  run bashdot uninstall /root test
-  echo $output | grep "Profile 'test' not installed from '/root'."
+  run bashdot uninstall /home/circleci test
+  echo $output | grep "Profile 'test' not installed from '/home/circleci'."
   [ $status = 1 ]
 }
 
 @test "error uninstall directory does not exist" {
-  cd /root
+  cd /home/circleci
   bashdot install default
   run bashdot uninstall /boom default
   echo $output | grep "Profile 'default' not installed from '/boom'."
@@ -62,12 +62,12 @@ setup() {
   mkdir -p default
   touch default/bashrc
   run bashdot install default
-  echo $output | grep "File '/root/.bashrc' already exists, exiting."
+  echo $output | grep "File '/home/circleci/.bashrc' already exists, exiting."
   [ $status = 1 ]
 }
 
 @test "error file already in another profile" {
-  cd /root
+  cd /home/circleci
   bashdot install default
 
   mkdir -p another
@@ -77,18 +77,18 @@ setup() {
 }
 
 @test "error installing template without variables set" {
-  cd /root
+  cd /home/circleci
   unset APP_SECRET_KEY
   run bashdot install rendered
   [ $status = 1 ]
 
-  run test -e /root/.env
+  run test -e /home/circleci/.env
   [ $status = 1 ]
 }
 
 @test "error installing from invalid current working directory" {
   mkdir /tmp/invalid,name
-  cp -r /root/default /tmp/invalid,name
+  cp -r /home/circleci/default /tmp/invalid,name
   cd /tmp/invalid,name
   run bashdot install default
   [ $status = 1 ]
@@ -116,14 +116,14 @@ setup() {
 }
 
 @test "install" {
-  cd /root
+  cd /home/circleci
   run bashdot install default work
   echo $output | grep "Completed installation of all profiles successfully."
   [ $status = 0 ]
 }
 
 @test "install from directory with leading ." {
-  cd /root
+  cd /home/circleci
   mkdir .dotfiles
   cp -r default .dotfiles
   cp -r work .dotfiles
@@ -134,17 +134,17 @@ setup() {
 }
 
 @test "installing rendered template file" {
-  cd /root
+  cd /home/circleci
   run env APP_SECRET_KEY=test1234 bashdot install rendered
   echo $output | grep "Completed installation of all profiles successfully."
-  cat /root/.env | grep 'export APP_SECRET_KEY=test1234'
+  cat /home/circleci/.env | grep 'export APP_SECRET_KEY=test1234'
 
-  run sum /root/.env
+  run sum /home/circleci/.env
   echo $output | grep '58480'
 }
 
 @test "install suceeds when profile already installed from another directory" {
-  cd /root
+  cd /home/circleci
   bashdot install default
 
   cd /tmp
@@ -155,7 +155,7 @@ setup() {
 }
 
 @test "install bashdot profiles from another directory" {
-  cd /root
+  cd /home/circleci
   bashdot install default work
 
   cd /tmp
@@ -166,99 +166,99 @@ setup() {
   [ $status = 0 ]
 
   run bashdot profiles
-  [ "${lines[0]}" == "/root default" ]
-  [ "${lines[1]}" == "/root work" ]
+  [ "${lines[0]}" == "/home/circleci default" ]
+  [ "${lines[1]}" == "/home/circleci work" ]
   [ "${lines[2]}" == "/tmp another" ]
   [ $status = 0 ]
 
   run bashdot dir
-  [ "${lines[0]}" == "/root" ]
+  [ "${lines[0]}" == "/home/circleci" ]
   [ "${lines[1]}" == "/tmp" ]
   [ $status = 0 ]
 
   run bashdot links
   echo "$output"
-  [ "${lines[0]}" == "~/.bashrc -> /root/default/bashrc" ]
-  [ "${lines[1]}" == "~/.profilerc_work -> /root/work/profilerc_work" ]
+  [ "${lines[0]}" == "~/.bashrc -> /home/circleci/default/bashrc" ]
+  [ "${lines[1]}" == "~/.profilerc_work -> /home/circleci/work/profilerc_work" ]
   [ "${lines[2]}" == "~/.test -> /tmp/another/test" ]
   [ $status = 0 ]
 }
 
 @test "install multiple profiles in directories with the same leading prefix" {
-  cd /root
+  cd /home/circleci
   bashdot install default work
-  cd /root/another_test
+  cd /home/circleci/another_test
   bashdot install home
 
   run bashdot profiles
-  [ "${lines[0]}" == "/root default" ]
-  [ "${lines[1]}" == "/root work" ]
-  [ "${lines[2]}" == "/root/another_test home" ]
+  [ "${lines[0]}" == "/home/circleci/another_test home" ]
+  [ "${lines[1]}" == "/home/circleci default" ]
+  [ "${lines[2]}" == "/home/circleci work" ]
 
-  bashdot uninstall /root work
+  bashdot uninstall /home/circleci work
   run bashdot profiles
-  [ "${lines[0]}" == "/root default" ]
-  [ "${lines[1]}" == "/root/another_test home" ]
+  [ "${lines[0]}" == "/home/circleci/another_test home" ]
+  [ "${lines[1]}" == "/home/circleci default" ]
 }
 
 @test "validate ignored files not symlinked" {
-  cd /root
+  cd /home/circleci
   bashdot install default work home
 
-  run test -e /root/.bashrc
+  run test -e /home/circleci/.bashrc
   [ $status = 0 ]
 
-  run test -e /root/.profilerc_work
+  run test -e /home/circleci/.profilerc_work
   [ $status = 0 ]
 
-  run test -e /root/.profilerc_home
+  run test -e /home/circleci/.profilerc_home
   [ $status = 0 ]
 
-  run test -e /root/.README.md
+  run test -e /home/circleci/.README.md
   [ $status != 0 ]
 
-  run test -e /root/.CHANGELOG.txt
+  run test -e /home/circleci/.CHANGELOG.txt
   [ $status != 0 ]
 }
 
 @test "re-install" {
-  cd /root
+  cd /home/circleci
   bashdot install default work
   run bashdot install default work
   [ $status = 0 ]
 }
 
 @test "list profiles" {
-  cd /root
+  cd /home/circleci
   bashdot install default work
   run bashdot profiles
-  [ "${lines[0]}" == "/root default" ]
-  [ "${lines[1]}" == "/root work" ]
+  [ "${lines[0]}" == "/home/circleci default" ]
+  [ "${lines[1]}" == "/home/circleci work" ]
   [ $status = 0 ]
 }
 
 @test "list profiles with only rendered template in home directory" {
-  cd /root
+  cd /home/circleci
   run env APP_SECRET_KEY=test1234 bashdot install rendered
   run bashdot profiles
-  [ "${lines[0]}" == "/root rendered" ]
+  [ "${lines[0]}" == "/home/circleci rendered" ]
   [ $status = 0 ]
 }
 
 @test "links" {
-  cd /root
+  cd /home/circleci
   bashdot install default work
   run bashdot links
-  [ "${lines[0]}" == "~/.bashrc -> /root/default/bashrc" ]
-  [ "${lines[1]}" == "~/.profilerc_work -> /root/work/profilerc_work" ]
+  [ "${lines[0]}" == "~/.bashrc -> /home/circleci/default/bashrc" ]
+  [ "${lines[1]}" == "~/.profilerc_work -> /home/circleci/work/profilerc_work" ]
   [ $status = 0 ]
 }
 
 @test "dir" {
-  cd /root
+  cd /home/circleci
   bashdot install default work
   run bashdot dir
-  [ "${lines[0]}" == "/root" ]
+  [ "${lines[0]}" == "/home/circleci" ]
   [ $status = 0 ]
 }
 
@@ -282,7 +282,7 @@ setup() {
 }
 
 @test "profilerc is sourced" {
-  cd /root
+  cd /home/circleci
   bashdot install default work
   . ~/.bashrc
   [ "$HOME_VAR" == "" ]
@@ -294,17 +294,17 @@ setup() {
 }
 
 @test "uninstall" {
-  cd /root
+  cd /home/circleci
   bashdot install default work
 
   run bashdot dir
-  [ "$output" == "/root" ]
+  [ "$output" == "/home/circleci" ]
   [ $status = 0 ]
 
-  run bashdot uninstall /root default
+  run bashdot uninstall /home/circleci default
   [ $status = 0 ]
 
-  run bashdot uninstall /root work
+  run bashdot uninstall /home/circleci work
   [ $status = 0 ]
 
   run bashdot profiles
@@ -317,7 +317,7 @@ setup() {
 }
 
 @test "uninstall multiple directories" {
-  cd /root
+  cd /home/circleci
   bashdot install default work
 
   cd /tmp
@@ -326,20 +326,20 @@ setup() {
   bashdot install another
 
   run bashdot dir
-  [ "${lines[0]}" == "/root" ]
+  [ "${lines[0]}" == "/home/circleci" ]
   [ "${lines[1]}" == "/tmp" ]
   [ $status = 0 ]
 
-  run bashdot uninstall /root work
+  run bashdot uninstall /home/circleci work
   [ $status = 0 ]
 
   run bashdot profiles
-  [ "${lines[0]}" == "/root default" ]
+  [ "${lines[0]}" == "/home/circleci default" ]
   [ "${lines[1]}" == "/tmp another" ]
   [ $status = 0 ]
 
   run bashdot dir
-  [ "${lines[0]}" == "/root" ]
+  [ "${lines[0]}" == "/home/circleci" ]
   [ "${lines[1]}" == "/tmp" ]
   [ $status = 0 ]
 
@@ -347,15 +347,15 @@ setup() {
   [ $status = 0 ]
 
   run bashdot profiles
-  [ "${lines[0]}" == "/root default" ]
+  [ "${lines[0]}" == "/home/circleci default" ]
   [ "${lines[1]}" == "" ]
   [ $status = 0 ]
 
   run bashdot dir
-  [ "${lines[0]}" == "/root" ]
+  [ "${lines[0]}" == "/home/circleci" ]
   [ $status = 0 ]
 
-  run bashdot uninstall /root default
+  run bashdot uninstall /home/circleci default
   [ $status = 0 ]
 
   run bashdot profiles
@@ -371,26 +371,26 @@ setup() {
 }
 
 @test "uninstall rendered file" {
-  run test -f /root/.env
+  run test -f /home/circleci/.env
   [ $status = 1 ]
 
-  run test -f /root/rendered/env.rendered
+  run test -f /home/circleci/rendered/env.rendered
   [ $status = 1 ]
 
-  cd /root
+  cd /home/circleci
   env APP_SECRET_KEY=test1234 bashdot install rendered
 
-  run test -f /root/.env
+  run test -f /home/circleci/.env
   [ $status = 0 ]
 
-  run test -f /root/rendered/env.rendered
+  run test -f /home/circleci/rendered/env.rendered
   [ $status = 0 ]
 
-  bashdot uninstall /root rendered
+  bashdot uninstall /home/circleci rendered
 
-  run test -f /root/.env
+  run test -f /home/circleci/.env
   [ $status = 1 ]
 
-  run test -f /root/rendered/env.rendered
+  run test -f /home/circleci/rendered/env.rendered
   [ $status = 1 ]
 }

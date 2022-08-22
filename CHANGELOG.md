@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Refactor test to run as non root
 - Update build image and fixed ci
 - Typos / comments (Thanks @vincentqb)
 
