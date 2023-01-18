@@ -281,7 +281,7 @@ uninstall() {
     for link in $(list_links); do
         log debug "Evaluating if '$link' is part of a bashdot profile in dir '$dir'."
         expected_target_file_name=$(basename "$link" | cut -c 2-)
-        if echo $(readlink ~/"$link") |grep -E "^$dir/[a-zA-Z0-9_-]*/${expected_target_file_name}(\.rendered)?$" > /dev/null; then
+        if readlink ~/"$link" |grep -E "^$dir/[a-zA-Z0-9_-]*/${expected_target_file_name}(\.rendered)?$" > /dev/null; then
             log debug "'$link' is part of a bashdot profile in '$dir', not removing '$dir' from '$bashdot_config_file'."
             dir_empty=false
             break
