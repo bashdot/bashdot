@@ -8,7 +8,7 @@ bashdot_config_file=$HOME/.bashdot
 LOGGER_FMT=${LOGGER_FMT:="%Y-%m-%d"}
 LOGGER_LVL=${LOGGER_LVL:="info"}
 
-if [ ! -z "$BASHDOT_LOG_LEVEL" ]; then
+if [ -n "$BASHDOT_LOG_LEVEL" ]; then
     LOGGER_LVL=$BASHDOT_LOG_LEVEL
 fi
 
