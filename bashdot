@@ -291,7 +291,7 @@ uninstall() {
     if [ "$dir_empty" = true ]; then
         log info "Removing '$dir' from '$bashdot_config_file'."
         mv "$bashdot_config_file" "${bashdot_config_file}".backup
-        cat "${bashdot_config_file}".backup |grep -v "^$dir$" > "$bashdot_config_file"
+        grep -v "^$dir$" < "${bashdot_config_file}".backup > "$bashdot_config_file"
     fi
 
     # If there are no more bashdot profiles, remove .bashdot and backup
