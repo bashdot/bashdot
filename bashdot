@@ -233,7 +233,7 @@ dir() {
     if [ ! -f "$bashdot_config_file" ]; then
         log info "No dotfiles installed by bashdot."
     else
-        cat "$bashdot_config_file" |sort
+        sort "$bashdot_config_file"
     fi
 }
 
