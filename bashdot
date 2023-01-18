@@ -209,7 +209,7 @@ list_profiles() {
     if [ ! -f "$bashdot_config_file" ];then
         log info "No dotfiles installed by bashdot."
     else
-        for dir in $(cat "$bashdot_config_file"); do
+        while IFS= read -r dir; do
             for link in $(list_links); do
                 expected_target_file_name=$(basename "$link" | cut -c 2-)
                 if readlink ~/"$link" | grep -E "^$dir/[.a-zA-Z0-9_-]*/$expected_target_file_name(\.rendered)?$" > /dev/null; then
@@ -217,7 +217,7 @@ list_profiles() {
                     echo "$dir $profile"
                 fi
             done
-        done |sort |uniq
+        done < "$bashdot_config_file" |sort |uniq
     fi
 }
 
