@@ -195,12 +195,12 @@ list_links() {
         if [[ -h ~/"$file" ]]; then
 
             # Only include if it points to the dotfiles directory
-            for bashdot_dir in $(cat "$bashdot_config_file"); do
+            while IFS= read -r bashdot_dir; do
                 expected_target_file_name=$(basename "$file" | cut -c 2-)
                 if readlink ~/"$file" |grep -E "^$bashdot_dir/[a-zA-Z0-9_-]*/$expected_target_file_name(\.rendered)?$" > /dev/null; then
                     echo "$file"
                 fi
-            done
+            done < "$bashdot_config_file"
         fi
     done
 }
