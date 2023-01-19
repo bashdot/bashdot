@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.1.7] - 2023-01-18
+### Changed
+- Shellcheck fixes (Thanks @vincentqb)
+
 ## [4.1.6] - 2022-08-22
 ### Changed
 - Refactor test to run as non root
