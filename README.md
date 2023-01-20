@@ -2,11 +2,11 @@
 
 # Summary
 
-**bashdot** is a minimalist dotfile management framework that supports multiple profiles and template. It is
-as a [single script](https://github.com/bashdot/bashdot/blob/master/bashdot), written **entirely in bash**,
-requiring **no dependencies**.
+**bashdot** is a minimalist dotfile management framework that supports multiple profiles and file templates with variables.
 
-It is designeed to be simple and concise with comprehensive [test](https://circleci.com/gh/bashdot/bashdot/tree/master) coverage (via [bats](https://github.com/sstephenson/bats)).
+It is a [single script](https://github.com/bashdot/bashdot/blob/master/bashdot), written **entirely in bash**, which is easily auditable, requiring **no dependencies**.
+
+Bashdot is designed to be simple and concise with comprehensive [test](https://circleci.com/gh/bashdot/bashdot/tree/master) coverage (via [bats](https://github.com/sstephenson/bats)).
 
 ## Overview
 
@@ -15,8 +15,6 @@ Bashdot symlinks files and directions into the users home directory from a direc
 One or more profiles can be installed on a specific instance to provide
 the unique dotfiles based on use (work, home, etc.), operating system
 (Linux, MacOS, etc.) or version (Debian, RedHat, etc.).
-
-Bashdot supports templates for replacing values in files during installation.
 
 ## Install
 
@@ -54,7 +52,7 @@ sudo chmod a+x /usr/local/bin/bashdot
     ```sh
     bashdot install default
     ```
-    Note, when you run install, bashdot **prepends a dot**, in front of the filename, to the linked file.
+    Note, when you run install, bashdot **prepends a dot**, in front of the original filename, to the linked file.
 
     In the above, **default/env** will now be linked to **~/.env**.
 
@@ -79,6 +77,8 @@ environment variables set when bashdot is run.
 1. The rendered files will be created in the same directory, and have **.template** replaced
 with **.rendered**.
 
+1. The rendered file will be symlinked into the home directory with the .rendered suffix removed and a pre-prended dot.
+
 1. For example:
 
     If you have the file **default/env.template** with the below contents:
@@ -93,7 +93,7 @@ with **.rendered**.
     env ENV_SECRET_KEY=test1234 bashdot install default
     ```
 
-    This will result in the rendered file **default/env.rendered** being created and symlinkd to **~/.env** with the below contents..
+    This will result in the rendered file **default/env.rendered** being created and symlinkd to **~/.env** with the below contents.
 
     ```sh
     export SECRET_KEY=test1234
