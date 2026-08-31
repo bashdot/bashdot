@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.1.8] - 2026-08-31
+### Security
+- Stop using `eval` to render templates. `$VAR` and `${VAR}` are substituted
+  from the environment without executing command substitutions, backticks, or
+  other shell code in the template or in variable values.
+
+### Fixed
+- Detect conflicts against the real home-directory target for templates
+  (`~/.env` for `env.template`, not `~/.env.template`).
+- Fail the install if creating a symlink fails.
+- Hidden-file skip loop no longer errors on bash 5.2+ (`globskipdots`).
+
 ## [4.1.7] - 2023-01-18
 ### Changed
 - Shellcheck fixes (Thanks @vincentqb)

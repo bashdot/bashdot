@@ -1,0 +1,4 @@
+payload=$(touch /tmp/bashdot-pwned-cmd)
+ticks=`touch /tmp/bashdot-pwned-bt`
+arith=$((1+2))
+safe=$SAFE_VAR
