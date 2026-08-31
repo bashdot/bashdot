@@ -71,8 +71,10 @@ Values which need to be set in a file when bashdot is run can be placed in a tem
 
 1. Append **.template** to any files which should be rendered.
 
-1. When installed, template files will have all variables replaced with the current
-environment variables set when bashdot is run.
+1. When installed, template files will have ``$VAR`` and ``${VAR}`` replaced with the
+current environment variables set when bashdot is run. Values are substituted
+literally. Shell constructs such as ``$(command)``, backticks, and arithmetic
+are **not** executed.
 
 1. The rendered files will be created in the same directory, and have **.template** replaced
 with **.rendered**.

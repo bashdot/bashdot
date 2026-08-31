@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=4.1.7
+VERSION=4.1.8
 
 current_working_dir=$(pwd)
 bashdot_config_file=$HOME/.bashdot
@@ -72,6 +72,133 @@ log() {
     true
 }
 
+# Home-directory destination for a profile file. Templates install as
+# ~/.<name> (suffix stripped), not ~/.<name>.template.
+target_dotfile() {
+    file=$1
+    case "$file" in
+        *.template)
+            echo "$HOME/.${file%.template}"
+            ;;
+        *)
+            echo "$HOME/.$file"
+            ;;
+    esac
+}
+
+profile_source_file() {
+    profile_dir=$1
+    file=$2
+    case "$file" in
+        *.template)
+            echo "$profile_dir/${file%.template}.rendered"
+            ;;
+        *)
+            echo "$profile_dir/$file"
+            ;;
+    esac
+}
+
+# Substitute only $VAR and ${VAR} from the environment. Values are copied
+# literally — command substitution, backticks, and arithmetic are not executed.
+# Unset variables are a fatal error, matching the previous set -u check.
+render_template() {
+    source_file=$1
+    dest_file=$2
+
+    content=$(cat "$source_file")
+    len=${#content}
+    result=""
+    i=0
+
+    while [ "$i" -lt "$len" ]; do
+        c="${content:$i:1}"
+
+        if [ "$c" != '$' ]; then
+            result="${result}${c}"
+            i=$((i + 1))
+            continue
+        fi
+
+        if [ $((i + 1)) -ge "$len" ]; then
+            result="${result}$"
+            i=$((i + 1))
+            continue
+        fi
+
+        next="${content:$((i + 1)):1}"
+
+        if [ "$next" = '{' ]; then
+            start=$((i + 2))
+            if [ "$start" -ge "$len" ]; then
+                result="${result}\${"
+                i=$((i + 2))
+                continue
+            fi
+            first="${content:$start:1}"
+            case "$first" in
+                [a-zA-Z_])
+                    pos=$start
+                    while [ "$pos" -lt "$len" ]; do
+                        ch="${content:$pos:1}"
+                        case "$ch" in
+                            [a-zA-Z0-9_]) pos=$((pos + 1)) ;;
+                            *) break ;;
+                        esac
+                    done
+                    namelen=$((pos - start))
+                    varname="${content:$start:$namelen}"
+                    if [ "$pos" -lt "$len" ] && [ "${content:$pos:1}" = '}' ]; then
+                        if [ -z "${!varname+x}" ]; then
+                            log error "Variable '$varname' is unset in template '$source_file'."
+                            exit 1
+                        fi
+                        result="${result}${!varname}"
+                        i=$((pos + 1))
+                    else
+                        result="${result}$"
+                        i=$((i + 1))
+                    fi
+                    ;;
+                *)
+                    result="${result}$"
+                    i=$((i + 1))
+                    ;;
+            esac
+        else
+            case "$next" in
+                [a-zA-Z_])
+                    start=$((i + 1))
+                    pos=$start
+                    while [ "$pos" -lt "$len" ]; do
+                        ch="${content:$pos:1}"
+                        case "$ch" in
+                            [a-zA-Z0-9_]) pos=$((pos + 1)) ;;
+                            *) break ;;
+                        esac
+                    done
+                    namelen=$((pos - start))
+                    varname="${content:$start:$namelen}"
+                    if [ -z "${!varname+x}" ]; then
+                        log error "Variable '$varname' is unset in template '$source_file'."
+                        exit 1
+                    fi
+                    result="${result}${!varname}"
+                    i=$pos
+                    ;;
+                *)
+                    result="${result}$"
+                    i=$((i + 1))
+                    ;;
+            esac
+        fi
+    done
+
+    if [ -n "$dest_file" ]; then
+        printf '%s\n' "$result" > "$dest_file"
+    fi
+}
+
 link_dotfile() {
     dotfile=$1
     source_file=$2
@@ -84,9 +211,17 @@ link_dotfile() {
         return
     fi
 
+    if [ -e "$dotfile" ] || [ -L "$dotfile" ]; then
+        log error "File '$dotfile' already exists, exiting."
+        exit 1
+    fi
+
     log debug "'$dotfile' does not link to desired target '$source_file'."
     log info "Linking '$source_file' to '$dotfile'."
-    ln -s "$source_file" "$dotfile"
+    if ! ln -s "$source_file" "$dotfile"; then
+        log error "Failed to link '$source_file' to '$dotfile'."
+        exit 1
+    fi
 }
 
 install() {
@@ -109,9 +244,9 @@ install() {
     log debug "Checking for exiting conflicting dotfiles."
     cd "$profile_dir" || exit
     for file in $(ls |grep -E -iv "$ignored_files"); do
-        dotfile=~/."$file"
-        source_file="$profile_dir/$file"
-        if [ -e "$dotfile" ]; then
+        dotfile=$(target_dotfile "$file")
+        source_file=$(profile_source_file "$profile_dir" "$file")
+        if [ -e "$dotfile" ] || [ -L "$dotfile" ]; then
             existing=$(readlink "$dotfile")
 
             # Skip files which already link to the same location
@@ -135,28 +270,21 @@ install() {
         echo "$current_working_dir" > "$bashdot_config_file"
     fi
 
-    for skipped_file in $(ls -ad .*); do
-        if [ "$skipped_file" != ".." ] && [ "$skipped_file" != "." ]; then
-            log warn "Skipping file with dot prepended '$skipped_file'. Remove dot if file should be linked."
-        fi
+    # globskipdots (bash 5.2+) makes .* no longer match . or ..; if the
+    # profile has no hidden files, `ls -ad .*` then errors. Walk hidden
+    # names explicitly and skip the . and .. entries.
+    for skipped_file in .[!.]* ..?*; do
+        [ -e "$skipped_file" ] || [ -L "$skipped_file" ] || continue
+        log warn "Skipping file with dot prepended '$skipped_file'. Remove dot if file should be linked."
     done
 
-    # For each template, we will source it, and write the output to dev null. But send
-    # error to std out.  This will ensure that all variables are set prior running or
-    # exit with an error on the unset variable.
+    # Validate templates before writing any rendered files so a missing
+    # variable cannot leave a partial install behind.
     for template in $(ls |grep -E '.*\.template$'); do
         source_file="$profile_dir/$template"
         log info "Ensuring all variables in template '$source_file' are set."
-
-        # Eval in current environment with 'set -u' to error on unset variables
-        # For some reason both 'set -u' below are required in my testing, I'm
-        # not sure why.
-        set -u
-        eval set -u "cat <<EOF
-$(<"$source_file")
-EOF" > /dev/null
+        render_template "$source_file" ""
     done
-    set +u
     log info "All variables used in templates are set."
 
     log info "Installing dotfiles from '$profile_dir'."
@@ -164,22 +292,14 @@ EOF" > /dev/null
         source_file="$profile_dir/$file"
 
         if [[ "$source_file" == *.template ]]; then
-            rendered_file_name=$(echo "$file" | sed -e 's/^\(.*\)\.template/\1.rendered/')
-            rendered_file_path="$profile_dir/$rendered_file_name"
+            rendered_file_path=$(profile_source_file "$profile_dir" "$file")
+            dotfile=$(target_dotfile "$file")
 
             log info "'$source_file' is a template, rendering to '$rendered_file_path'."
-            dotfile_name=$(echo "$file" | sed -e 's/^\(.*\)\.template/\1/')
-            dotfile=~/."$dotfile_name"
-
-            # Eval in current environment to replace variables with current environment
-            eval "cat <<EOF
-$(<"$source_file")
-EOF" > "$rendered_file_path" 2> /dev/null
-
-            # Linking dotfile to rendered file path
+            render_template "$source_file" "$rendered_file_path"
             link_dotfile "$dotfile" "$rendered_file_path"
         else
-            dotfile=~/."$file"
+            dotfile=$(target_dotfile "$file")
             link_dotfile "$dotfile" "$source_file"
         fi
 

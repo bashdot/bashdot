@@ -1,7 +1,14 @@
 #!/usr/bin/env bats
 
 setup() {
-  /bin/rm -rf ~/.bashrc ~/.profile ~/.profilerc* ~/.bashdot another ~/.test ~/.env /home/circleci/rendered/env.rendered
+  /bin/rm -rf ~/.bashrc ~/.profile ~/.profilerc* ~/.bashdot another ~/.test ~/.env \
+    ~/.cmd ~/.special ~/.braced ~/.prefix \
+    /home/circleci/rendered/env.rendered \
+    /home/circleci/secure/*.rendered \
+    /tmp/bashdot-pwned-cmd /tmp/bashdot-pwned-bt /tmp/bashdot-pwned-eof /tmp/bashdot-pwned-val \
+    /tmp/bashdot-empty /tmp/invalid,name /tmp/default /tmp/another \
+    /tmp/profile_with_invalid1 /tmp/profile_with_invalid2 /tmp/profile_with_invalid3 \
+    /home/circleci/.dotfiles
 }
 
 @test "general help" {
@@ -29,6 +36,8 @@ setup() {
 }
 
 @test "error profile does not exist" {
+  mkdir -p /tmp/bashdot-empty
+  cd /tmp/bashdot-empty
   run bashdot install default
   echo $output | grep "Profile 'default' directory does not exist."
   [ $status = 1 ]
@@ -80,9 +89,21 @@ setup() {
   cd /home/circleci
   unset APP_SECRET_KEY
   run bashdot install rendered
+  echo $output | grep "Variable 'APP_SECRET_KEY' is unset in template '/home/circleci/rendered/env.template'."
   [ $status = 1 ]
 
   run test -e /home/circleci/.env
+  [ $status = 1 ]
+
+  run test -e /home/circleci/rendered/env.rendered
+  [ $status = 1 ]
+}
+
+@test "error file already exists on template install" {
+  touch ~/.env
+  cd /home/circleci
+  run env APP_SECRET_KEY=test1234 bashdot install rendered
+  echo $output | grep "File '/home/circleci/.env' already exists, exiting."
   [ $status = 1 ]
 }
 
@@ -141,6 +162,63 @@ setup() {
 
   run sum /home/circleci/.env
   echo $output | grep '58480'
+}
+
+@test "template command substitution and backticks are not executed" {
+  cd /home/circleci
+  run env SAFE_VAR=ok FOO=one FOOBAR=two BRACED_SECRET=braced123 SPECIAL_VAL=plain \
+    bashdot install secure
+  echo $output | grep "Completed installation of all profiles successfully."
+  [ $status = 0 ]
+
+  run test -e /tmp/bashdot-pwned-cmd
+  [ $status = 1 ]
+
+  run test -e /tmp/bashdot-pwned-bt
+  [ $status = 1 ]
+
+  grep -F 'payload=$(touch /tmp/bashdot-pwned-cmd)' /home/circleci/.cmd
+  grep -F 'ticks=`touch /tmp/bashdot-pwned-bt`' /home/circleci/.cmd
+  grep -F 'arith=$((1+2))' /home/circleci/.cmd
+  grep -F 'safe=ok' /home/circleci/.cmd
+}
+
+@test "template braced variables are substituted" {
+  cd /home/circleci
+  run env SAFE_VAR=ok FOO=one FOOBAR=two BRACED_SECRET=braced123 SPECIAL_VAL=plain \
+    bashdot install secure
+  [ $status = 0 ]
+  grep -F 'export KEY=braced123' /home/circleci/.braced
+}
+
+@test "template prefix variables do not clobber longer names" {
+  cd /home/circleci
+  run env SAFE_VAR=ok FOO=one FOOBAR=two BRACED_SECRET=braced123 SPECIAL_VAL=plain \
+    bashdot install secure
+  [ $status = 0 ]
+  [ "$(cat /home/circleci/.prefix)" = $'FOO=one\nFOOBAR=two' ]
+}
+
+@test "template values are not re-expanded or executed" {
+  cd /home/circleci
+  export SAFE_VAR=ok
+  export FOO=one
+  export FOOBAR=two
+  export BRACED_SECRET=braced123
+  export SPECIAL_VAL=$'line1\nEOF\n$(touch /tmp/bashdot-pwned-eof)\n`touch /tmp/bashdot-pwned-val`\n$HOME'
+  run bashdot install secure
+  [ $status = 0 ]
+
+  run test -e /tmp/bashdot-pwned-eof
+  [ $status = 1 ]
+
+  run test -e /tmp/bashdot-pwned-val
+  [ $status = 1 ]
+
+  grep -F '$(touch /tmp/bashdot-pwned-eof)' /home/circleci/.special
+  grep -F '`touch /tmp/bashdot-pwned-val`' /home/circleci/.special
+  grep -F '$HOME' /home/circleci/.special
+  grep -F 'after=ok' /home/circleci/.special
 }
 
 @test "install suceeds when profile already installed from another directory" {
